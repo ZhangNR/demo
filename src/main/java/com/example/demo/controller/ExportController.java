@@ -31,11 +31,14 @@ import java.util.stream.Collectors;
 @RestController
 public class ExportController {
 
-    @Autowired
-    private IPubProjectService service;
+    private final IPubProjectService service;
+    private final IMonthlyReportSingleProjectService monthlyReportSingleProjectService;
 
     @Autowired
-    private IMonthlyReportSingleProjectService monthlyReportSingleProjectService;
+    public ExportController(IPubProjectService service, IMonthlyReportSingleProjectService monthlyReportSingleProjectService) {
+        this.service = service;
+        this.monthlyReportSingleProjectService = monthlyReportSingleProjectService;
+    }
 
 
     @GetMapping("excelExport")

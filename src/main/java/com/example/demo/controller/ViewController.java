@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -13,17 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("view")
 public class ViewController {
 
-    @RequestMapping("index")
+    @GetMapping("index")
     private String index() {
         return "index";
     }
 
-    @RequestMapping("resource")
+    @GetMapping("resource")
     private String resource() {
         return "resource";
     }
 
-    @RequestMapping("imageConversion")
+    @GetMapping("imageConversion")
     private String imageConversion() {
         return "imageConversion";
     }

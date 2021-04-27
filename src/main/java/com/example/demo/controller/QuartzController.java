@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -31,7 +32,7 @@ public class QuartzController {
     @PostMapping("Quartz")
     @ApiOperation(value = "定时任务_创建", notes = "创建")
     @ResponseBody
-    public Object quartz(@RequestParam("orderNo") String orderNo) throws Exception {
+    public Object quartz(@RequestParam("orderNo") String orderNo) throws SchedulerException {
         //当前时间7秒之后
         Date start = new Date(System.currentTimeMillis() + 7 * 1000);
 
@@ -82,7 +83,7 @@ public class QuartzController {
             //启动
             scheduler.start();
         }
-        System.err.println("----定时任务启动成功； " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " ------------");
+        MessageFormat.format("定时任务启动成功 ! {} {}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), "●●●●●●");
         return "ok";
     }
 

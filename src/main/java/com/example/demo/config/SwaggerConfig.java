@@ -21,16 +21,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport {
     @Bean
-    public Docket createRestApi(){
+    public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build();
+
         //添加登录认证
-                /*.securitySchemes(securitySchemes())
-                .securityContexts(securityContexts());*/
+        //.securitySchemes(securitySchemes())
+        //.securityContexts(securityContexts());
     }
 
     private ApiInfo apiInfo() {
@@ -44,6 +45,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
     /**
      * 配置swagger2的静态资源路径
+     *
      * @param registry reg
      */
     @Override
@@ -58,7 +60,6 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
-
 
 
 }

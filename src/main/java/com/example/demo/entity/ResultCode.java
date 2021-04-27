@@ -28,15 +28,7 @@ public enum ResultCode {
      */
     INTERNAL_SERVER_ERROR(500);
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public int code;
+    private int code;
 
     ResultCode(int code) {
         this.code = code;

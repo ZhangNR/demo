@@ -1,6 +1,5 @@
 package com.example.demo.mapper;
 
-import com.example.demo.entity.Gcj02;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
