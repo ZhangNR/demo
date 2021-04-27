@@ -361,13 +361,6 @@ function Gmap(mapId) {
     this.maps = {}; //当前地图对象
 }
 
-new Gmap().maps.
-
-
-
-
-
-let map;
 
 let point = new BMapGL.Point(116.404, 39.915);
 

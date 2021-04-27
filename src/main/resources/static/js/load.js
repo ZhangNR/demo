@@ -37,7 +37,7 @@ function mapChange(MapType) {
     switch (MapType) {
         //百度地图
         case 0:
-            loadScript('//api.map.baidu.com/api?type=webgl&v=1.0&ak=GOcwt6BEFX6u9PcejPGgFevNUkulf8Ml', function () {
+            loadScript('//api.map.baidu.com/api?type=webgl&v=1.0&ak=***', function () {
                 removeMapArea();
                 console.log('Here地图加载OK');
                 let map = new BMapGL.Map("container", {
@@ -70,7 +70,7 @@ function mapChange(MapType) {
             break;
         //Google Map
         case 1:
-            loadScript('https://maps.googleapis.com/maps/api/js?language=zh-CN&region=cn&key=AIzaSyDXObuhPPX1Ed-FxiAmbqHdpWVnniMAcgM&libraries=drawing,geometry', function () {
+            loadScript('https://maps.googleapis.com/maps/api/js?language=zh-CN&region=cn&key=******&libraries=drawing,geometry', function () {
                 removeMapArea();
                 console.log('Google Map加载OK');
                 let map = new google.maps.Map(document.getElementById('container'), {

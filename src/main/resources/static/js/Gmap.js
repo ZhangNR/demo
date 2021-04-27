@@ -26,11 +26,11 @@
 })(window);
 
 function loadGoogleMap() {
-    document.write('<script src="https://maps.googleapis.com/maps/api/js?language=zh-CN&region=cn&key=AIzaSyDXObuhPPX1Ed-FxiAmbqHdpWVnniMAcgM&libraries=drawing,geometry"></script>');
+    document.write('<script src="https://maps.googleapis.com/maps/api/js?language=zh-CN&region=cn&key=********&libraries=drawing,geometry"></script>');
 }
 
 function loadBaiduMap() {
-    document.write('<script src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=GOcwt6BEFX6u9PcejPGgFevNUkulf8Ml"></script>');
+    document.write('<script src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=************"></script>');
 }
 
 
