@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.SplitDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.SplitDetail">
+        <id column="id" property="id" />
+        <result column="invoice_apply_instance_id" property="invoiceApplyInstanceId" />
+        <result column="partner" property="partner" />
+        <result column="split_amount" property="splitAmount" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, invoice_apply_instance_id, partner, split_amount, create_time
+    </sql>
+
+</mapper>

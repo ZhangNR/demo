@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.FrameworkContractMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.FrameworkContract">
+        <id column="id" property="id" />
+        <result column="type" property="type" />
+        <result column="num" property="num" />
+        <result column="name" property="name" />
+        <result column="money" property="money" />
+        <result column="cooperation_area" property="cooperationArea" />
+        <result column="cooperation_ratio" property="cooperationRatio" />
+        <result column="p_id" property="pId" />
+        <result column="partner_name" property="partnerName" />
+        <result column="partner_contact_name" property="partnerContactName" />
+        <result column="partner_contact_phone" property="partnerContactPhone" />
+        <result column="sign_date" property="signDate" />
+        <result column="electronic_file_date" property="electronicFileDate" />
+        <result column="paper_file_date" property="paperFileDate" />
+        <result column="paper_file_num" property="paperFileNum" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_name" property="creatorName" />
+        <result column="creator_dept_id" property="creatorDeptId" />
+        <result column="voucher_num" property="voucherNum" />
+        <result column="voucher_url" property="voucherUrl" />
+        <result column="state" property="state" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, type, num, name, money, cooperation_area, cooperation_ratio, p_id, partner_name, partner_contact_name, partner_contact_phone, sign_date, electronic_file_date, paper_file_date, paper_file_num, creator_id, creator_name, creator_dept_id, voucher_num, voucher_url, state, create_date, update_date
+    </sql>
+
+</mapper>

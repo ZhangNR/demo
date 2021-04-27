@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.InvoiceApplyMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.InvoiceApply">
+        <id column="id" property="id" />
+        <result column="pt_dept_id" property="ptDeptId" />
+        <result column="pt_dept_name" property="ptDeptName" />
+        <result column="pt_sub_dept_id" property="ptSubDeptId" />
+        <result column="pt_sub_dept_name" property="ptSubDeptName" />
+        <result column="state" property="state" />
+        <result column="invoicing_name" property="invoicingName" />
+        <result column="apply_type" property="applyType" />
+        <result column="tax_rate" property="taxRate" />
+        <result column="order_contract_ids" property="orderContractIds" />
+        <result column="sum_amount_order" property="sumAmountOrder" />
+        <result column="sum_amount_apply" property="sumAmountApply" />
+        <result column="collection_project" property="collectionProject" />
+        <result column="attachment" property="attachment" />
+        <result column="note" property="note" />
+        <result column="ratio" property="ratio" />
+        <result column="customer_id" property="customerId" />
+        <result column="customer_name" property="customerName" />
+        <result column="tax_number" property="taxNumber" />
+        <result column="bank_name" property="bankName" />
+        <result column="bank_account" property="bankAccount" />
+        <result column="address" property="address" />
+        <result column="phone" property="phone" />
+        <result column="invoicing_time" property="invoicingTime" />
+        <result column="invoicing_amount" property="invoicingAmount" />
+        <result column="tax_amount" property="taxAmount" />
+        <result column="reimbursement_data" property="reimbursementData" />
+        <result column="payment_time" property="paymentTime" />
+        <result column="payment_amount" property="paymentAmount" />
+        <result column="is_all" property="isAll" />
+        <result column="split_amount" property="splitAmount" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_name" property="creatorName" />
+        <result column="dept_id" property="deptId" />
+        <result column="voucher_num" property="voucherNum" />
+        <result column="voucher_url" property="voucherUrl" />
+        <result column="create_time" property="createTime" />
+        <result column="change_time" property="changeTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, pt_dept_id, pt_dept_name, pt_sub_dept_id, pt_sub_dept_name, state, invoicing_name, apply_type, tax_rate, order_contract_ids, sum_amount_order, sum_amount_apply, collection_project, attachment, note, ratio, customer_id, customer_name, tax_number, bank_name, bank_account, address, phone, invoicing_time, invoicing_amount, tax_amount, reimbursement_data, payment_time, payment_amount, is_all, split_amount, creator_id, creator_name, dept_id, voucher_num, voucher_url, create_time, change_time
+    </sql>
+
+</mapper>

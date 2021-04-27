@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.PubProjectMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.PubProject">
+        <id column="id" property="id" />
+        <result column="project_approval_id" property="projectApprovalId" />
+        <result column="pub_project_num" property="pubProjectNum" />
+        <result column="pub_project_name" property="pubProjectName" />
+        <result column="state" property="state" />
+        <result column="single_project_ids" property="singleProjectIds" />
+        <result column="sum_design_money" property="sumDesignMoney" />
+        <result column="publish_money" property="publishMoney" />
+        <result column="deviation" property="deviation" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_name" property="creatorName" />
+        <result column="create_time" property="createTime" />
+        <result column="change_time" property="changeTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, project_approval_id, pub_project_num, pub_project_name, state, single_project_ids, sum_design_money, publish_money, deviation, creator_id, creator_name, create_time, change_time
+    </sql>
+
+</mapper>

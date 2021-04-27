@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.OrderContractMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.OrderContract">
+        <id column="id" property="id" />
+        <result column="pt_dept_id" property="ptDeptId" />
+        <result column="pt_dept_name" property="ptDeptName" />
+        <result column="pt_sub_dept_id" property="ptSubDeptId" />
+        <result column="pt_sub_dept_name" property="ptSubDeptName" />
+        <result column="type" property="type" />
+        <result column="category" property="category" />
+        <result column="framework_id" property="frameworkId" />
+        <result column="framework_num" property="frameworkNum" />
+        <result column="framework_name" property="frameworkName" />
+        <result column="framework_money" property="frameworkMoney" />
+        <result column="num" property="num" />
+        <result column="project" property="project" />
+        <result column="projects" property="projects" />
+        <result column="publishs" property="publishs" />
+        <result column="name" property="name" />
+        <result column="money" property="money" />
+        <result column="cooperation_ratio" property="cooperationRatio" />
+        <result column="tax_rate" property="taxRate" />
+        <result column="p_id" property="pId" />
+        <result column="partner_name" property="partnerName" />
+        <result column="partner_contact_name" property="partnerContactName" />
+        <result column="partner_contact_phone" property="partnerContactPhone" />
+        <result column="partner_address" property="partnerAddress" />
+        <result column="tax_num" property="taxNum" />
+        <result column="bank_account" property="bankAccount" />
+        <result column="bank_name" property="bankName" />
+        <result column="bank_branch_name" property="bankBranchName" />
+        <result column="produce_leaders" property="produceLeaders" />
+        <result column="sign_date" property="signDate" />
+        <result column="electronic_file_date" property="electronicFileDate" />
+        <result column="paper_file_date" property="paperFileDate" />
+        <result column="paper_file_num" property="paperFileNum" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_name" property="creatorName" />
+        <result column="creator_dept_id" property="creatorDeptId" />
+        <result column="voucher_num" property="voucherNum" />
+        <result column="voucher_url" property="voucherUrl" />
+        <result column="state" property="state" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, pt_dept_id, pt_dept_name, pt_sub_dept_id, pt_sub_dept_name, type, category, framework_id, framework_num, framework_name, framework_money, num, project, projects, publishs, name, money, cooperation_ratio, tax_rate, p_id, partner_name, partner_contact_name, partner_contact_phone, partner_address, tax_num, bank_account, bank_name, bank_branch_name, produce_leaders, sign_date, electronic_file_date, paper_file_date, paper_file_num, creator_id, creator_name, creator_dept_id, voucher_num, voucher_url, state, create_date, update_date
+    </sql>
+
+</mapper>

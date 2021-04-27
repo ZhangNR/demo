@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.PerformanceBorrowDeptMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.PerformanceBorrowDept">
+        <id column="id" property="id" />
+        <result column="dept_id" property="deptId" />
+        <result column="sub_dept_id" property="subDeptId" />
+        <result column="borrow_dept_id" property="borrowDeptId" />
+        <result column="borrow_sub_dept_id" property="borrowSubDeptId" />
+        <result column="output" property="output" />
+        <result column="dept_use" property="deptUse" />
+        <result column="borrow_dept_use" property="borrowDeptUse" />
+        <result column="voucher_num" property="voucherNum" />
+        <result column="creator_id" property="creatorId" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, dept_id, sub_dept_id, borrow_dept_id, borrow_sub_dept_id, output, dept_use, borrow_dept_use, voucher_num, creator_id, create_date
+    </sql>
+
+</mapper>

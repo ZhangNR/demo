@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>你看我还有机会吗</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../static/elementUI/index.css">
+    <style>
+        [v-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+    <el-button type="primary" @click="image">图片压缩</el-button>
+    <el-select v-model="uploadType" placeholder="请选择上传类型">
+        <el-option label="代发" value="代发">
+        </el-option>
+    </el-select>
+    <el-upload class="upload-demo" ref="upload" multiple action="" :file-list="formFileList"
+               :http-request="postUploadFileData"
+               :on-change="fileChange" :before-remove="beforeRemove" :on-remove="handleRemove"
+               :on-success="uploadSuccess" :on-error="uploadError"
+               :before-upload="beforeUpload" accept=".xls,.xlsx,.xlm,.xlsm,.pdf" :auto-upload="false">
+        <el-button slot="trigger" type="primary">选取文件</el-button>
+        <el-button style="margin-left: 20px;" type="success" @click="submitUpload">上传到服务器</el-button>
+    </el-upload>
+</div>
+
+</body>
+<script src="../static/vue/vue.js"></script>
+<script src="../static/elementUI/index.js"></script>
+<script src="../static/vue/axios.min.js"></script>
+<script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.10.3/dingtalk.open.js"></script>
+<script>
+    const CORP_ID = "ding803030f55b77d1fd35c2f4657eb6378f";
+    let vm = new Vue({
+        el: "#app",
+        data() {
+            return {
+                codeList: [],
+                /* 上传表格数据 */
+                uploadData: [], //上传类型
+                uploadType: '', //默认选中
+                photoSrc: '', //图片示例
+                photoTitle: '',
+                formMaxSize: 8, // 上传文件大小
+                formFileList: [], // 上传文件
+            }
+        },
+        methods: {
+            image() {
+                window.location.href='../view/imageConversion';
+            },
+            /* 选择文件类型 */
+            uploadChange(value) {
+                console.log(value);
+                vm.formFileList = [];
+            },
+            /* 上传到服务器 */
+            submitUpload() {
+                if (this.uploadType === '') {
+                    return this.$message.error('请先选择上传类型！');
+                } else if (this.formFileList.length === 0) {
+                    return this.$message.error('请选择文件！');
+                } else {
+                    this.$refs.upload.submit();
+                }
+            },
+            /* 上传服务器之前的判断 */
+            beforeUpload(file) {
+                // 验证文件大小
+                if (file.size / 1024 / 1024 > this.formMaxSize) {
+                    this.$message.warning('上传文件大小不能超过' + this.formMaxSize + 'M!');
+                    return false;
+                }
+                // 验证文件类型
+                var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase();
+                const extension = testmsg === 'xlsx' || testmsg === 'xls' || testmsg === 'xlm' || testmsg === 'xlsm' || testmsg === 'pdf';
+                if (!extension) {
+                    this.$message.warning('上传文件只能是Excel和PDF格式!');
+                    return false;
+                }
+            },
+            /* 上传文件 */
+            postUploadFileData(param) {
+                let code;
+                let errorMsg;
+                let formData = new FormData();
+
+                this.$confirm('是否上传文件?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let WebData = {
+                        uploadType: '代发',
+                        year: 2020,
+                        month: 11,
+                        authCode: []
+                    };
+                    console.log(this.formFileList);
+                    let promise = [];
+                    this.formFileList.forEach((param, index) => {
+                        formData.append('files', param.raw);
+
+                        promise[index] = dd.runtime.permission.requestAuthCode({corpId: CORP_ID});
+                        promise[index].then((res) => {
+                            WebData.authCode.push(res.code);
+                        }, (err) => {
+                            console.log(err);
+                            window.location.href = "../view/error?errorMsg=" + err.errorMessage + " [" + err.errorCode + "]";
+                        });
+                    });
+                    Promise.all(promise).then((result) => {
+                        console.log(result);
+                        //上传
+                        console.log('WebData' + JSON.stringify(WebData));
+                        formData.append('WebData', JSON.stringify(WebData));
+                        axios.post('../web/uploadFile', formData).then(response => {
+                            console.log(response.data);
+                            const loading = this.$loading({
+                                lock: true,
+                                text: '上传中，请稍候...'
+                            });
+
+                            code = response.data.code;
+                            errorMsg = response.data.errorMsg;
+
+                            switch (code) {
+                                case "0":
+                                    setTimeout(() => {
+                                        loading.close();
+                                        this.$message({
+                                            type: 'success',
+                                            message: '上传成功!',
+                                        });
+                                    }, 2000);
+                                    this.formFileList = [];
+                                    break;
+                                case "99":
+                                    loading.close();
+                                    //window.location.href="../view/error?errorMsg="+errorMsg;
+                                    break;
+                                case "1":
+                                case "2":
+                                    loading.close();
+                                    this.$message({
+                                        type: 'error',
+                                        message: '上传文件失败，' + errorMsg,
+                                    });
+                                    this.formFileList = [];
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消上传'
+                    });
+                });
+            },
+            /* 文件改变时的钩子 */
+            fileChange(file, fileList) {
+                this.formFileList = fileList;
+            },
+            /*文件移除前的钩子*/
+            beforeRemove(file, fileList) {
+                this.$confirm(`确定移除 “${ file.name }” 文件？`);
+            },
+            /* 移除文件时的钩子 */
+            handleRemove(file, formFileList) {
+                console.log('移除一个文件');
+                for (let i = 0; i < this.formFileList.length; i++) {
+                    if (this.formFileList[i].name === file.name) {
+                        this.formFileList.splice(i, 1);
+                        break;
+                    }
+                }
+            },
+            /* 上传失败 */
+            uploadError(err, file, fileList) {
+                this.$message.error('上传文件失败，请重试!');
+            },
+            /* 上传成功 */
+            uploadSuccess(response, file, fileList) {
+                this.$message.success('上传文件成功!');
+            },
+        },
+        mounted() {
+            // this.$alert('来了老弟！');
+            // let prom = [];
+            // for (let i = 0; i < 2; i++) {
+            //     let getCode = dd.runtime.permission.requestAuthCode({corpId: CORP_ID});
+            //     prom.push(getCode);
+            //     getCode.then((res) => {
+            //         console.log(res);
+            //         console.log(res.code);
+            //         vm.codeList.push(res.code);
+            //     }, (err) => {
+            //         console.log(err);
+            //     })
+            // }
+            // // let getCode = dd.runtime.permission.requestAuthCode({corpId: CORP_ID});
+            // Promise.all(prom).then((result) => {
+            //     console.log(result);
+            //     console.log(vm.codeList);
+            //     //上传
+            // });
+        }
+    })
+</script>
+</html>
