@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.impl.MyJobDetail;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.Date;
  * @date 2020/11/3
  */
 @Controller
+@Api(tags = "定时器模块")
 public class QuartzController {
 
     private final Scheduler scheduler;
@@ -30,7 +32,7 @@ public class QuartzController {
     }
 
     @PostMapping("Quartz")
-    @ApiOperation(value = "定时任务_创建", notes = "创建")
+    @ApiOperation(value = "定时任务_创建", notes = "测试")
     @ResponseBody
     public Object quartz(@RequestParam("orderNo") String orderNo) throws SchedulerException {
         //当前时间7秒之后
@@ -88,7 +90,7 @@ public class QuartzController {
     }
 
     @PostMapping("shutdown")
-    @ApiOperation(value = "定时任务_停止", notes = "停止")
+    @ApiOperation(value = "定时任务_停止", notes = "测试")
     @ResponseBody
     public Object shutdown(@RequestParam("orderNo") String orderNo) throws SchedulerException {
         //暂停Trigger
@@ -97,7 +99,7 @@ public class QuartzController {
     }
 
     @PostMapping("resume")
-    @ApiOperation(value = "定时任务_恢复", notes = "恢复")
+    @ApiOperation(value = "定时任务_恢复", notes = "测试")
     @ResponseBody
     public Object resume(@RequestParam("orderNo") String orderNo) throws SchedulerException {
         //恢复Trigger
@@ -106,7 +108,7 @@ public class QuartzController {
     }
 
     @PostMapping("del")
-    @ApiOperation(value = "定时任务_删除", notes = "删除")
+    @ApiOperation(value = "定时任务_删除", notes = "测试")
     @ResponseBody
     public Object del(@RequestParam("orderNo") String orderNo) throws SchedulerException {
         //暂停触发器

@@ -3,8 +3,10 @@ package com.example.demo.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
 import com.example.demo.entity.PaymentApplication;
+import com.example.demo.entity.Result;
 import com.example.demo.service.CallbackService;
 import com.example.demo.untils.DingServiceApi;
+import com.example.demo.untils.Response;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,13 +21,13 @@ import java.util.List;
 public class CallbackServiceImpl implements CallbackService {
 
     @Override
-    public void invoice(JSONObject json) {
+    public Result invoice(JSONObject json) {
         OapiProcessinstanceGetResponse.ProcessInstanceTopVo processinstance = DingServiceApi.getProcessinstance(json.getString("processInstanceId"), DingServiceApi.getToken());
 
         // 解析vo 获取所需数据
 
         if (processinstance == null) {
-            return;
+            return Response.fail("获取审批实例失败！", json.getString("processInstanceId"));
         }
 
         List<OapiProcessinstanceGetResponse.FormComponentValueVo> vos = processinstance.getFormComponentValues();
@@ -46,6 +48,7 @@ public class CallbackServiceImpl implements CallbackService {
 
         // 对payment 处理
 
+        return Response.success("处理成功", null);
     }
 
 

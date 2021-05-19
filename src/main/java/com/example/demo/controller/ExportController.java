@@ -8,6 +8,8 @@ import com.example.demo.entity.PubProject;
 import com.example.demo.service.IMonthlyReportSingleProjectService;
 import com.example.demo.service.IPubProjectService;
 import com.example.demo.untils.ExcelUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
  * @date 2021/3/29
  */
 @RestController
+@Api(tags = "导入导出模块")
 public class ExportController {
 
     private final IPubProjectService service;
@@ -41,6 +44,7 @@ public class ExportController {
     }
 
 
+    @ApiOperation(value = "姓名、年级导出测试")
     @GetMapping("excelExport")
     public void excelExport(HttpServletResponse response) {
         String[] excelHeader = {"姓名", "年纪"};
@@ -61,6 +65,7 @@ public class ExportController {
         ExcelUtils.exportExcel(response, excelHeader, excelHeaderKey, list, "统计表格", "用户数据");
     }
 
+    @ApiOperation(value = "导入", notes = "出版便捷录入测试")
     @PostMapping("import")
     public void excelImport(MultipartFile file, HttpServletResponse response) throws Exception {
         String[] excelHeader = {"系统编号", "部门编号", "部门", "项目组编号", "项目组", "大项", "名称", "年份", "月份", "勘察日期", "专业", "设计费", "设计人员", "附件", "备注", "状态", "出版状态", "创建人", "创建时间", "更新时间", "单册编号"};

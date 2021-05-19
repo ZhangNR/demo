@@ -7,8 +7,9 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +27,12 @@ import java.util.*;
  */
 public class ExcelUtils {
 
+    private ExcelUtils() {
+
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
+
     /**
      * Excel 导出
      *
@@ -39,45 +46,45 @@ public class ExcelUtils {
     public static void exportExcel(HttpServletResponse response, String[] header, String[] keys, List<Map<String, Object>> content, String title, String sheetName) {
         title = title + ".xlsx";
 
-        SXSSFWorkbook workbook = new SXSSFWorkbook(content.size() + 1);
-        SXSSFSheet sheet = workbook.createSheet(sheetName);
-        SXSSFRow row = sheet.createRow(0);
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook(content.size() + 1)) {
 
-        // 设置行高
-        row.setHeight((short) 700);
-        // 设置列宽
-        for (int i = 0; i < header.length; i++) {
-            sheet.setColumnWidth(i, 20 * 256);
+            SXSSFSheet sheet = workbook.createSheet(sheetName);
+            SXSSFRow row = sheet.createRow(0);
 
-            SXSSFCell cell = row.createCell(i);
-            cell.setCellValue(header[i]);
-            cell.setCellStyle(headerStyle(workbook));
-        }
+            // 设置行高
+            row.setHeight((short) 700);
+            // 设置列宽
+            for (int i = 0; i < header.length; i++) {
+                sheet.setColumnWidth(i, 20 * 256);
 
-        for (int i = 0; i < content.size(); i++) {
-            Map<String, Object> map = content.get(i);
-            row = sheet.createRow(i + 1);
-            row.setHeight((short) 500);
-
-            for (int j = 0; j < keys.length; j++) {
-                SXSSFCell cell = row.createCell(j);
-                cell.setCellValue(map.get(keys[j]) == null ? "" : map.get(keys[j]).toString());
-                cell.setCellStyle(contentStyle(workbook));
+                SXSSFCell cell = row.createCell(i);
+                cell.setCellValue(header[i]);
+                cell.setCellStyle(headerStyle(workbook));
             }
-        }
 
-        title = new String(title.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
-        response.reset();
+            for (int i = 0; i < content.size(); i++) {
+                Map<String, Object> map = content.get(i);
+                row = sheet.createRow(i + 1);
+                row.setHeight((short) 500);
 
-        response.setContentType("application/octet-stream; charset=utf-8");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Content-Disposition", "attachment; filename=" + title);
-        try {
+                for (int j = 0; j < keys.length; j++) {
+                    SXSSFCell cell = row.createCell(j);
+                    cell.setCellValue(map.get(keys[j]) == null ? "" : map.get(keys[j]).toString());
+                    cell.setCellStyle(contentStyle(workbook));
+                }
+            }
+
+            title = new String(title.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+            response.reset();
+
+            response.setContentType("application/octet-stream; charset=utf-8");
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Content-Disposition", "attachment; filename=" + title);
+
             workbook.write(response.getOutputStream());
             response.getOutputStream().close();
         } catch (IOException e) {
-            System.out.println("ExcelUtils - exportExcel " + LocalDateTime.now() + " [error]: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("ExcelUtils - exportExcel {} [error]: ", LocalDateTime.now(), e);
         }
 
     }
@@ -88,7 +95,7 @@ public class ExcelUtils {
      * @param file 文件
      * @param keys 数据顺序
      */
-    public static List<Map<String, Object>> importExcel(MultipartFile file, String sheetName, String[] keys) throws Exception {
+    public static List<Map<String, Object>> importExcel(MultipartFile file, String sheetName, String[] keys) throws IOException {
         Workbook workbook = null;
 
         String fileName = file.getOriginalFilename();
@@ -103,14 +110,15 @@ public class ExcelUtils {
         Sheet sheet;
         List<Map<String, Object>> result = new ArrayList<>();
 
-        List<String> strings = Arrays.asList("id", "year", "month","project_approval_id");
+        List<String> strings = Arrays.asList("id", "year", "month", "project_approval_id");
 
         if (workbook != null) {
             sheet = workbook.getSheet(sheetName);
             int rowCount = sheet.getPhysicalNumberOfRows();
-//            if (sheet.getRow(1).getPhysicalNumberOfCells() != keys.length) {
-//                throw new RuntimeException("导入的Excel和模板的列不匹配");
-//            }
+            if (sheet.getRow(1).getPhysicalNumberOfCells() != keys.length) {
+                logger.error("导入的Excel和模板的列不匹配");
+                return result;
+            }
 
             for (int i = 0; i < rowCount - 1; i++) {
                 Row row = sheet.getRow(i + 1);

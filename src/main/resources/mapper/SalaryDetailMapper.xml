@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.SalaryDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.SalaryDetail">
+        <id column="id" property="id"/>
+        <result column="year" property="year"/>
+        <result column="month" property="month"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="id_card_no" property="idCardNo"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="team_id" property="teamId"/>
+        <result column="team_name" property="teamName"/>
+        <result column="position_level" property="positionLevel"/>
+        <result column="employee_status" property="employeeStatus"/>
+        <result column="salary_attribute" property="salaryAttribute"/>
+        <result column="is_new" property="isNew"/>
+        <result column="account_bank" property="accountBank"/>
+        <result column="bank_account_no" property="bankAccountNo"/>
+        <result column="actual_working_days" property="actualWorkingDays"/>
+        <result column="vacation_sum" property="vacationSum"/>
+        <result column="absence_leave" property="absenceLeave"/>
+        <result column="examine_point" property="examinePoint"/>
+        <result column="grade_basic_salary" property="gradeBasicSalary"/>
+        <result column="bonus" property="bonus"/>
+        <result column="communication_allowance" property="communicationAllowance"/>
+        <result column="travel_allowance" property="travelAllowance"/>
+        <result column="computer_allowance" property="computerAllowance"/>
+        <result column="high_temperature_allowance" property="highTemperatureAllowance"/>
+        <result column="vehicle_allowance" property="vehicleAllowance"/>
+        <result column="special_allowance" property="specialAllowance"/>
+        <result column="absence_deduction" property="absenceDeduction"/>
+        <result column="merit_pay" property="meritPay"/>
+        <result column="quarterly_bonus" property="quarterlyBonus"/>
+        <result column="annual_bonus" property="annualBonus"/>
+        <result column="manual_adjustment_1" property="manualAdjustment1"/>
+        <result column="manual_adjustment_note_1" property="manualAdjustmentNote1"/>
+        <result column="manual_adjustment_2" property="manualAdjustment2"/>
+        <result column="manual_adjustment_note_2" property="manualAdjustmentNote2"/>
+        <result column="gross_pay" property="grossPay"/>
+        <result column="other_adjustment" property="otherAdjustment"/>
+        <result column="gross_pay_sum" property="grossPaySum"/>
+        <result column="social_insurance" property="socialInsurance"/>
+        <result column="housing_fund" property="housingFund"/>
+        <result column="insurance_fund_sum" property="insuranceFundSum"/>
+        <result column="before_tax_payment" property="beforeTaxPayment"/>
+        <result column="personal_income_tax" property="personalIncomeTax"/>
+        <result column="after_tax_payment" property="afterTaxPayment"/>
+        <result column="create_date" property="createDate"/>
+        <result column="change_date" property="changeDate"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, year, month, user_id, user_name, id_card_no, dept_id, dept_name, team_id, team_name, position_level, employee_status, salary_attribute, is_new, account_bank, bank_account_no, actual_working_days, vacation_sum, absence_leave, examine_point, grade_basic_salary, bonus, communication_allowance, travel_allowance, computer_allowance, high_temperature_allowance, vehicle_allowance, special_allowance, absence_deduction, merit_pay, quarterly_bonus, annual_bonus, manual_adjustment_1, manual_adjustment_note_1, manual_adjustment_2, manual_adjustment_note_2, gross_pay, other_adjustment, gross_pay_sum, social_insurance, housing_fund, insurance_fund_sum, before_tax_payment, personal_income_tax, after_tax_payment, create_date, change_date
+    </sql>
+
+    <select id="listGrossPay" resultType="com.example.demo.entity.SalaryDetailVO">
+        SELECT
+            sa.year,
+	        sa.month,
+            sa.user_id,
+            sa.user_name,
+            sa.dept_id,
+            sa.dept_name,
+            sa.team_id,
+            sa.team_name,
+            sd.position_level,
+            sd.actual_working_days,
+            sd.gross_pay,
+            sd.gross_pay_sum
+        FROM
+            salary_entry se
+            INNER JOIN salary_detail sd ON se.year = #{tableYear}
+            AND se.month = #{tableMonth}
+            AND se.status IN ( '批准', '归档' )
+            AND se.id = sd.salary_id
+            INNER JOIN sys_employee_info_addup sa ON sd.user_id = sa.user_id
+        WHERE
+            sa.employee_status != '已离职'
+            AND sa.position NOT IN ( '行政人员', '所长', '副所长', '主任', '副总经理', '总经理' )
+            AND sa.year = #{finalYear}
+            AND sa.month = #{finalMonth}
+    </select>
+
+</mapper>

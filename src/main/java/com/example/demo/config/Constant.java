@@ -25,7 +25,7 @@ public class Constant {
     public static final String APP_SECRET = "kghHUTvWeZy4Nk68uzxzrKUiMkAFOPCVSmM0-y_yFoa7juuhIUV16cSy4HE_LHAq";
     public static final String AGENT_ID = "968588941";
     public static final String PROCESS_CODE = "PROC-331AF1E0-3D16-42E2-9B6A-6962D247DF91";
-    public static final Long PRODUCTION_DEPARTMENT_ID = 104760460L;
+    public static final String PRODUCTION_DEPARTMENT_ID = "104760460";
     public static final String URL = "https://zjp.gdcreate.com/demo/view/index";
 
     /**

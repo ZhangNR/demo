@@ -2,8 +2,7 @@ package com.example.demo.config;
 
 import com.example.demo.entity.Result;
 import com.example.demo.entity.ResultCode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -21,9 +20,8 @@ import java.util.List;
  * @author ZhangJP
  * @date 2020/10/9
  */
-@Configuration
-public class HandlerException {
-    private final static Logger logger = LoggerFactory.getLogger(HandlerException.class);
+@Slf4j
+public class Handler {
 
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
         exceptionResolvers.add(new HandlerExceptionResolver() {
@@ -47,7 +45,7 @@ public class HandlerException {
                     } else {
                         message = e.getMessage();
                     }
-                    logger.error(message, e);
+                    log.error(message, e);
                 }
                 responseResult(response, result);
                 return new ModelAndView();

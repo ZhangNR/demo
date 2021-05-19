@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 
@@ -14,13 +15,14 @@ import java.util.Date;
  * @author ZhangJP
  * @date 2020/11/3
  */
+@Slf4j
 public class MyJobDetail implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        System.err.println(jobExecutionContext.getJobDetail().getJobDataMap().get("name"));
-        System.err.println(jobExecutionContext.getJobDetail().getJobDataMap().get("age"));
-        System.err.println(jobExecutionContext.getTrigger().getJobDataMap().get("orderNo"));
-        System.err.println("定时任务执行，当前时间：" + DateUtil.formatDateTime(new Date()));
+        log.info("定时任务 detail-> jobDataMap -> name: {}",jobExecutionContext.getJobDetail().getJobDataMap().get("name"));
+        log.info("定时任务 detail-> jobDataMap -> age: {}",jobExecutionContext.getJobDetail().getJobDataMap().get("age"));
+        log.info("定时任务 getTrigger-> jobDataMap -> orderNo: {}",jobExecutionContext.getTrigger().getJobDataMap().get("orderNo"));
+        log.info("定时任务执行，当前时间：" + DateUtil.formatDateTime(new Date()));
 
     }
 }

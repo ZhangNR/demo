@@ -38,7 +38,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
 
     n.exports = {testCDN: e, testWeb: r}
 });
-;define("common:widget/ui/mapTypeTab/mapTypeTab.js", function (require, exports, module) {
+define("common:widget/ui/mapTypeTab/mapTypeTab.js", function (require, exports, module) {
     var favMgr = require("common:widget/ui/fav/favMgr.js"), userMgr = require("common:widget/ui/userMgr/userMgr.js");
     require.loadCss({
         content: "#mapType-wrapper{position:absolute;bottom:0;right:0}#mapType{height:80px;cursor:pointer;-webkit-transition-property:width,background-color;transition-property:width,background-color;-webkit-transition-duration:.4s;transition-duration:.4s;width:110px;background-color:rgba(255,255,255,0)}.expand #mapType{width:298px;background-color:#fff;background-color:rgba(255,255,255,.8)}.expand #mapType .mapTypeCard{border:1px solid rgba(255,255,255,0);background-image:url(//webmap1.bdimg.com/wolfman/static/common/images/new/maptype_a6d3e9b.png)}.expand #mapType .mapTypeCard.active{border:1px solid #3385FF}.expand #mapType .normal{right:202px}.expand #mapType .satellite,.expand #mapType .earth{right:106px}@media only screen and (-webkit-min-device-pixel-ratio:2),(-webkit-min-device-pixel-ratio:2),(min-resolution:2dppx),(min-resolution:192dpi){.expand #mapType .mapTypeCard{background-image:url(//webmap1.bdimg.com/wolfman/static/common/images/new/maptype2x_282f70b.png)}}#mapType .mapTypeCard{height:60px;width:86px;position:absolute;border-radius:2px;top:10px;box-sizing:border-box;border:1px solid transparent;border:1px solid rgba(153,153,153,.42);background:url(//webmap1.bdimg.com/wolfman/static/common/images/new/shadow_3a100ef.png) no-repeat 0 0;background-size:86px 240px;-webkit-transition-property:right,background-image;transition-property:right,background-image;-webkit-transition-duration:.4s;transition-duration:.4s}#mapType .mapTypeCard span{position:absolute;bottom:0;right:0;display:inline-block;padding:3px 3px 2px 4px;font-size:12px;height:12px;line-height:12px;color:#FFF;border-top-left-radius:2px}#mapType .mapTypeCard.active span,#mapType .mapTypeCard:hover span{background-color:#3385FF}#mapType .mapTypeCard:hover{border:1px solid #3385FF}#mapType .normal{z-index:1;background-position:0 0;right:20px}#mapType .normal .switch-box p{margin-left:20px}#mapType .normal .switch-box input.switch{left:5px}#mapType .normal:hover .switch-box{visibility:visible}#mapType .satellite,#mapType .earth{right:15px;z-index:2;background-position:0 -60px}#mapType .satellite:hover .switch-box,#mapType .earth:hover .switch-box{visibility:visible}#mapType .earth{background-position:0 -181px}#mapType .panorama{z-index:3;right:10px;background-image:url(//webmap1.bdimg.com/wolfman/static/common/images/new/maptype_a6d3e9b.png);background-position:0 -121px;border-left:1px solid rgba(153,153,153,.6)}@media only screen and (-webkit-min-device-pixel-ratio:2),(-webkit-min-device-pixel-ratio:2),(min-resolution:2dppx),(min-resolution:192dpi){#mapType .panorama{background-image:url(//webmap1.bdimg.com/wolfman/static/common/images/new/maptype2x_282f70b.png)}}#mapType .switch-box{visibility:hidden;position:absolute;width:100%;height:20px;line-height:22px;color:#fff;background:rgba(0,0,0,.5)}#mapType .switch-box p{display:inline-block;margin-left:25px}#mapType .switch-box input.switch{position:absolute;left:8px;top:4px;cursor:pointer}",
@@ -194,7 +194,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
     };
     module.exports = MapTypeTab
 });
-;define("common:widget/ui/loadCtrls/LoadCtrls.js", function (n, o, t) {
+define("common:widget/ui/loadCtrls/LoadCtrls.js", function (n, o, t) {
     function e() {
     }
 
@@ -280,7 +280,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
         }
     }
 });
-;define("common:widget/ui/dataCopyRight/dataCopyRight.js", function (a, t) {
+define("common:widget/ui/dataCopyRight/dataCopyRight.js", function (a, t) {
     var o = a("common:widget/ui/areaCfg/areaCfg.js"), n = a("common:widget/ui/qrpop/qrpop.js"),
         p = (a("common:widget/ui/sms/sms.js"), a("common:widget/ui/config/config.js")), e = p.modelConfig,
         i = (p.mapConfig, "#copy-right-strong{padding-left:12px;position:relative}#copy-right-strong::before{content:'';height:12px;width:9px;position:absolute;left:0;top:50%;-webkit-transform:translateY(-52%);-ms-transform:translateY(-52%);transform:translateY(-52%);background:url(//webmap1.bdimg.com/wolfman/static/common/images/hot-copyright_ac4ab30.png) 0 0 no-repeat;background-size:100% 100%}");
@@ -312,7 +312,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
         }
     }
 });
-;define("common:widget/ui/changeMap/ChangeMap.js", function (e, a, t) {
+define("common:widget/ui/changeMap/ChangeMap.js", function (e, a, t) {
     function n(e) {
         e.addEventListener("beforesetmaptype", function () {
             e.closeInfoWindow()
@@ -332,7 +332,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
     }
     t.exports = n
 });
-;define("common:widget/ui/MapCenter/MapCenter.js", function (t, e, n) {
+define("common:widget/ui/MapCenter/MapCenter.js", function (t, e, n) {
     function i() {
         T.lang.Class.call(this), this._map = map, this.startPoint = map.getCenter(), this.unit = 1e4, this.url = m.MAP_CENTER_URL + "?newmap=1&qt=cen", this._cbks = []
     }
@@ -397,7 +397,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
         }
     }), n.exports = new i
 });
-;define("common:widget/ui/contextMenu/ContextMenu.js", function (e, t, n) {
+define("common:widget/ui/contextMenu/ContextMenu.js", function (e, t, n) {
     function i(e, t) {
         t = t || 0;
         var n = m.getState();
@@ -578,7 +578,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
         };
     n.exports = P
 });
-;define("common:widget/ui/Storage/Storage.js", function (e, t, a) {
+define("common:widget/ui/Storage/Storage.js", function (e, t, a) {
     baidu.storage = {}, baidu.storage._isValidKey = function (e) {
         return new RegExp('^[^\\x00-\\x20\\x7f\\(\\)<>@,;:\\\\\\"\\[\\]\\?=\\{\\}\\/\\u0080-\\uffff]+$').test(e)
     }, baidu.storage.userData = function () {
@@ -655,7 +655,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
         baidu.storage._isSupportLocalStorage() ? window.localStorage.clear() : baidu.storage.userData.clearAll()
     }, a.exports = baidu.storage
 });
-;define("common:widget/ui/searchInfoWindow/searchInfoWindow.js", function (e, i, a) {
+define("common:widget/ui/searchInfoWindow/searchInfoWindow.js", function (e, i, a) {
     function t(e) {
         var i = e.ext, a = i.detail_info, t = i.src_name, n = (t.toUpperCase() + "_", e.uid), o = e.poiType, s = e.cityCode, r = [],
             d = "hotel" == i.src_name && parseInt(a.pc_bookable), l = /^(hospital|house|education|scope|shopping)$/,
@@ -1511,7 +1511,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
         };
     a.exports = C
 });
-;define("common:widget/ui/Pc2Mobile/Pc2Mobile.js", function (e, i, o) {
+define("common:widget/ui/Pc2Mobile/Pc2Mobile.js", function (e, i, o) {
     var t = (e("common:widget/ui/stat/CodeStat.js"), e("common:widget/ui/util/util.js")), d = {
         box: null, init: function () {
             var e = this;
@@ -1595,7 +1595,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
     };
     o.exports = window.PcToMobile = n
 });
-;define("common:widget/ui/BannerAds/BannerAds.js", function (n, a, e) {
+define("common:widget/ui/BannerAds/BannerAds.js", function (n, a, e) {
     var i = n("common:widget/ui/config/config.js"), t = i.mapConfig;
     e.exports = {
         init: function () {
@@ -1614,7 +1614,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
         }
     }
 });
-;define("common:widget/ui/earthTools/earthTools.js", function (require, exports, module) {
+define("common:widget/ui/earthTools/earthTools.js", function (require, exports, module) {
     function EarthTools(t) {
         this._map = t.map || map, this.defaultCursor = this._map.config.defaultCursor, this.draggingCursor = this._map.config.draggingCursor, this.startTop = 70, this.startRight = 10, this.defaultAnchor = BMAP_ANCHOR_TOP_RIGHT, this.defaultOffset = new BMap.Size(this.startRight, this.startTop), this._curCount = 0, this._clickCount = 0, this._getCountURL = "http://map.baidu.com/opn/revo/counter/BaiduEarthLikeit/get?counter=click", this._postCountURL = "http://" + location.host + "/opn/revo/counter/BaiduEarthLikeit/incr/?counter=click", this._earthClockIsOpen = !1, this._isClosing = !1
     }
@@ -1729,7 +1729,7 @@ define("common:widget/ui/MapTest/MapTest.js", function (t, o, n) {
         }
     }
 });
-;define("common:widget/ui/earthTools/earthClock.js", function (t, i, e) {
+define("common:widget/ui/earthTools/earthClock.js", function (t, i, e) {
     function h(t) {
         var i = t.getContext("2d");
         this._canvas = t, this._ctx = i, this._ctxWidth = t.width, this._ctxHeight = t.height, this._date = new Date

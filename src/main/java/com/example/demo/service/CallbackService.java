@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.entity.Result;
 
 /**
  * CallbackService
@@ -10,5 +11,11 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface CallbackService {
 
-    void invoice(JSONObject json);
+    /**
+     * 开票回调
+     *
+     * @param json 审批信息
+     * @return result
+     */
+    Result invoice(JSONObject json);
 }

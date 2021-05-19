@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.entity.Result;
 import com.example.demo.service.CallbackService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("callback")
+@Api(tags = "回调接口")
 public class CallbackController {
 
     private final CallbackService callbackService;
@@ -25,9 +29,9 @@ public class CallbackController {
         this.callbackService = callbackService;
     }
 
+    @ApiOperation(value = "开票申请回调")
     @PostMapping("invoice")
-    public void invoice(@RequestBody JSONObject json) {
-        callbackService.invoice(json);
-
+    public Result invoice(@RequestBody JSONObject json) {
+        return callbackService.invoice(json);
     }
 }

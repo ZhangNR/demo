@@ -1,6 +1,9 @@
 package com.example.demo.untils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
+import java.nio.file.Files;
 
 /**
  * DeleteUselessRepository
@@ -10,6 +13,7 @@ import java.io.File;
  * @author ZhangJP
  * @date 2020/9/21
  */
+@Slf4j
 public class DeleteUselessRepository {
 
     public static void main() {
@@ -48,26 +52,27 @@ public class DeleteUselessRepository {
             }
         }
         if (!isHaveJar) {
-            delete(file);
+            cleanUp(file);
         }
         return isHaveJar;
     }
 
-    private static void delete(File file) {
+    private static void cleanUp(File file) {
         File[] files = file.listFiles();
         if (files != null && files.length > 0) {
             for (File f : files) {
                 if (f.isDirectory()) {
-                    delete(f);
+                    cleanUp(f);
                 }
+
                 if (f.delete()) {
-                    System.out.println("已删除：" + f.getAbsolutePath());
+                    log.info("已删除：{}", f.getAbsolutePath());
                 }
 
             }
         } else {
-            if (file.delete()){
-                System.out.println("已删除：" + file.getAbsolutePath());
+            if (file.delete()) {
+                log.info("已删除：{}", file.getAbsolutePath());
             }
         }
     }

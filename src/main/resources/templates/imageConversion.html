@@ -11,62 +11,62 @@
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/WangYuLue/image-conversion/build/conversion.js"></script>
 <script>
-    /* function view() {
-         const file = document.getElementById('demo').files[0];
-         console.log(file);
-         imageConversion.compressAccurately(file, 200).then(res => {
-             //The res in the promise is a compressed Blob type (which can be treated as a File type) file;
-             console.log(res);
-         });
-         imageConversion.compress(file, 0.75).then(res => {
-             console.log(res);
-         });
-     }*/
+  /* function view() {
+       const file = document.getElementById('demo').files[0];
+       console.log(file);
+       imageConversion.compressAccurately(file, 200).then(res => {
+           //The res in the promise is a compressed Blob type (which can be treated as a File type) file;
+           console.log(res);
+       });
+       imageConversion.compress(file, 0.75).then(res => {
+           console.log(res);
+       });
+   }*/
 
-    $("#upload").on('click', function () {
-        let WebData = {
-            uploadType: '代发',
-            year: 2020,
-            month: 11,
-            authCode: []
-        };
+  $("#upload").on('click', function () {
+    let WebData = {
+      uploadType: '代发',
+      year: 2020,
+      month: 11,
+      authCode: []
+    };
 
-        let formData = new FormData();
-        formData.append('WebData', JSON.stringify(WebData));
-        let files = document.getElementById('demo').files;
-        // formData.append("files", files);
-        let promise = [];
-        for (let i = 0; i < files.length; i++) {
-            promise[i] = imageConversion.compress(files[i], {
-                quality: 0.8,
-                scale: 0.5
-            });
-            promise[i].then(res => {
-                formData.append("files", new File([res], files[i].name, {type: res.type}));
-            }, (err) => {
-                console.log(err);
-            });
+    let formData = new FormData();
+    formData.append('WebData', JSON.stringify(WebData));
+    let files = document.getElementById('demo').files;
+    // formData.append("files", files);
+    let promise = [];
+    for (let i = 0; i < files.length; i++) {
+      promise[i] = imageConversion.compress(files[i], {
+        quality: 0.8,
+        scale: 0.5
+      });
+      promise[i].then(res => {
+        formData.append("files", new File([res], files[i].name, {type: res.type}));
+      }, (err) => {
+        console.log(err);
+      });
+    }
+    // console.log(formData.getAll("files"));
+    Promise.all(promise).then((result) => {
+      console.log(result);
+      $.ajax({
+        async: true,
+        type: "post",
+        url: "../web/uploadFile",
+        processData: false, // 告诉jQuery不要去处理发送的数据
+        contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+        data: formData,
+        success: function (e) {
+          console.log(e);
+        },
+        error: function (e) {
+          console.log(e);
         }
-        // console.log(formData.getAll("files"));
-        Promise.all(promise).then((result) => {
-            console.log(result);
-            $.ajax({
-                async: true,
-                type: "post",
-                url: "../web/uploadFile",
-                processData: false, // 告诉jQuery不要去处理发送的数据
-                contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-                data: formData,
-                success: function (e) {
-                    console.log(e);
-                },
-                error: function (e) {
-                    console.log(e);
-                }
-            })
-        });
-
+      })
     });
+
+  });
 
 </script>
 </html>

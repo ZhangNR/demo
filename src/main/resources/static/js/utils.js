@@ -11,11 +11,11 @@
  * @returns {number}
  */
 function getMonthLength(month) {
-    const date = new Date(month);
-    let year = date.getFullYear();
-    //月份是从 0 开始计算的
-    let _month = date.getMonth() + 1;
-    return new Date(year, _month, 0).getDate();
+  const date = new Date(month);
+  let year = date.getFullYear();
+  //月份是从 0 开始计算的
+  let _month = date.getMonth() + 1;
+  return new Date(year, _month, 0).getDate();
 }
 
 
@@ -30,28 +30,29 @@ function getMonthLength(month) {
  * @returns {Promise<any>}
  */
 function getData(url) {
-    // 返回一个 Promise 利用 Promise.all 接受
-    return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.responseType = 'json';
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    resolve(xhr.response);
-                }
-            }
-        };
-        xhr.open('GET', url, true);
-        xhr.send(null);
-    });
+  // 返回一个 Promise 利用 Promise.all 接受
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          resolve(xhr.response);
+        }
+      }
+    };
+    xhr.open('GET', url, true);
+    xhr.send(null);
+  });
 }
 
 const urls = ['./1.json', './2.json', './3.json'];
+
 function getMultiData(urls) {
-    // Promise.all 接受一个包含 promise 的数组，如果不是 promise 数组会被转成 promise
-    Promise.all(urls.map(url => getData(url))).then(results => {
-        console.log(results);
-    });
+  // Promise.all 接受一个包含 promise 的数组，如果不是 promise 数组会被转成 promise
+  Promise.all(urls.map(url => getData(url))).then(results => {
+    console.log(results);
+  });
 }
 
 /**
@@ -62,15 +63,15 @@ function getMultiData(urls) {
  * @param filename
  */
 function exportTxt(text, filename) {
-    const eleLink = document.createElement('a');
-    eleLink.download = filename;
-    eleLink.style.display = 'none';
-    // 将内容转为 blob
-    const blob = new Blob([text]);
-    eleLink.href = URL.createObjectURL(blob);
-    document.body.appendChild(eleLink);
-    eleLink.click();
-    document.body.removeChild(eleLink);
+  const eleLink = document.createElement('a');
+  eleLink.download = filename;
+  eleLink.style.display = 'none';
+  // 将内容转为 blob
+  const blob = new Blob([text]);
+  eleLink.href = URL.createObjectURL(blob);
+  document.body.appendChild(eleLink);
+  eleLink.click();
+  document.body.removeChild(eleLink);
 }
 
 /**
@@ -81,22 +82,22 @@ function exportTxt(text, filename) {
  * @returns {string}
  */
 function formatPrice(price) {
-    return String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    /*return String(price)
-        .split('')
-        .reverse()
-        .reduce((prev, next, index) => {
-            return (index % 3 ? next : next + ',') + prev;
-        });*/
+  /*return String(price)
+      .split('')
+      .reverse()
+      .reduce((prev, next, index) => {
+          return (index % 3 ? next : next + ',') + prev;
+      });*/
 
-    // (999999999).toLocaleString(); // 999,999,999
+  // (999999999).toLocaleString(); // 999,999,999
 
-    /*const options = {
-        style: 'currency',
-        currency: 'CNY',
-    };
-    (123456).toLocaleString('zh-CN', options); // ¥123,456.00*/
+  /*const options = {
+      style: 'currency',
+      currency: 'CNY',
+  };
+  (123456).toLocaleString('zh-CN', options); // ¥123,456.00*/
 }
 
 /**
@@ -107,14 +108,14 @@ function formatPrice(price) {
  * @returns {ReadonlyArray<any>}
  */
 const deepFreeze = o => {
-    const propNames = Object.getOwnPropertyNames(o);
-    propNames.forEach(name => {
-        const prop = o[name];
-        if (typeof prop === 'object' && prop !== null) {
-            deepFreeze(prop);
-        }
-    });
-    return Object.freeze(o);
+  const propNames = Object.getOwnPropertyNames(o);
+  propNames.forEach(name => {
+    const prop = o[name];
+    if (typeof prop === 'object' && prop !== null) {
+      deepFreeze(prop);
+    }
+  });
+  return Object.freeze(o);
 };
 
 /**
@@ -126,6 +127,6 @@ const deepFreeze = o => {
  * @returns {RegExp}
  */
 const encryptReg = (before = 3, after = 4) => {
-    return new RegExp('(\\d{' + before + '})\\d*(\\d{' + after + '})');
+  return new RegExp('(\\d{' + before + '})\\d*(\\d{' + after + '})');
 };
 // 使用：'13456789876'.replace(encryptReg(), '$1****$2') -> "134****9876"

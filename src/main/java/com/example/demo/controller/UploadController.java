@@ -5,8 +5,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.config.Constant;
 import com.example.demo.entity.WebExchangeInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,13 +25,14 @@ import java.io.File;
  */
 @RestController
 @RequestMapping("upload")
+@Api(tags = "上传文件模块")
+@Slf4j
 public class UploadController {
-    private static final Logger bizLogger = LoggerFactory.getLogger(UploadController.class);
 
-
+    @ApiOperation(value = "上传文件", notes = "上传文件并携带数据")
     @PostMapping("uploadFile")
     public JSONObject uploadFile(@RequestParam("WebData") String webData, @RequestParam("files") MultipartFile[] file) {
-        bizLogger.info("[uploadFile]: Start to Upload File and Call Audit ...");
+        log.info("[uploadFile]: Start to Upload File and Call Audit ...");
 
         WebExchangeInfo webExchangeInfo = JSON.parseObject(webData, WebExchangeInfo.class);
         JSONObject jsonResult = new JSONObject();
@@ -70,7 +72,7 @@ public class UploadController {
             jsonResult.put("data", fileArray);
 
         } catch (Exception e) {
-            bizLogger.error("[uploadFile]: ", e);
+            log.error("[uploadFile]: ", e);
 
             jsonResult.put("code", "99");
             jsonResult.put("errorMsg", e.getMessage());

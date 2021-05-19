@@ -17,9 +17,15 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  *
  * @author zjp
  */
-@Configuration
-@EnableSwagger2
+//@Configuration
+//@EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport {
+
+    /**
+     * 添加登录认证
+     * .securitySchemes(securitySchemes())
+     * .securityContexts(securityContexts());
+     */
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -29,14 +35,11 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                 .paths(PathSelectors.any())
                 .build();
 
-        //添加登录认证
-        //.securitySchemes(securitySchemes())
-        //.securityContexts(securityContexts());
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("接口文档")
+                .title("测试接口文档")
                 .description("简单优雅的restfun风格，http://www.1314sl.com")
                 .version("1.0")
                 .termsOfServiceUrl("http://www.1314sl.com")

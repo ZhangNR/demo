@@ -3822,7 +3822,7 @@ var parse_DefColWidth = parseuint16; /* 2.4.89 */
 var parse_DSF = parsenoop2; /* 2.4.94 -- MUST be ignored */
 var parse_EntExU2 = parsenoop2; /* 2.4.102 -- Explicitly says to ignore */
 var parse_EOF = parsenoop2; /* 2.4.103 */
-var parse_Excel9File = parsenoop2; /* 2.4.104 -- Optional and unused */
+var parse_Excel9File = parsenoop2; /* 2.4.104 -- optional and unused */
 var parse_FeatHdr = parsenoop2; /* 2.4.112 */
 var parse_FontX = parseuint16; /* 2.4.123 */
 var parse_Footer = parse_XLHeaderFooter; /* 2.4.124 */
@@ -4607,7 +4607,7 @@ function rgb_tint(hex, tint) {
 	var hsl = rgb2HSL(hex2RGB(hex));
 	if (tint < 0) hsl[2] = hsl[2] * (1 + tint);
 	else hsl[2] = 1 - (1 - hsl[2]) * (1 - tint);
-  var rev =rgb2Hex(hsl2RGB(hsl))
+  var rev =rgb2Hex(hsl2RGB(hsl));
 	return rev;
 }
 
@@ -4734,8 +4734,7 @@ function parse_fonts(t, opts) {
         break;
       case '</font>':
         styles.Fonts.push(font);
-        ;
-        font = {};
+          font = {};
         break;
 
       case '<name':
@@ -4943,7 +4942,7 @@ function parse_cellXfs(t, opts) {
       /* 18.8.1 alignment CT_CellAlignment */
       case '<alignment':
       case '<alignment/>':
-        var alignment = {}
+        var alignment = {};
           if (y.vertical) { alignment.vertical = y.vertical;}
           if (y.horizontal) { alignment.horizontal = y.horizontal;}
           if (y.textRotation != undefined) { alignment.textRotation = y.textRotation; }
@@ -4997,7 +4996,7 @@ var parse_sty_xml = (function make_pstyx() {
     if ((t = data.match(numFmtRegex))) parse_numFmts(t, opts);
 
     /* fonts CT_Fonts ? */
-    if ((t = data.match(/<fonts([^>]*)>.*<\/fonts>/))) parse_fonts(t, opts)
+    if ((t = data.match(/<fonts([^>]*)>.*<\/fonts>/))) parse_fonts(t, opts);
 
     /* fills CT_Fills */
     if ((t = data.match(fillsRegex))) parse_fills(t, opts);
@@ -5556,8 +5555,8 @@ var rc_to_a1 = (function(){
 
 /* --- formula references point to MS-XLS --- */
 /* Small helpers */
-function parseread(l) { return function(blob, length) { blob.l+=l; return; }; }
-function parseread1(blob, length) { blob.l+=1; return; }
+function parseread(l) { return function(blob, length) { blob.l+=l;  }; }
+function parseread1(blob, length) { blob.l+=1;  }
 
 /* Rgce Helpers */
 
@@ -7489,7 +7488,7 @@ function get_cell_style_csf(cellXf) {
 
   if (cellXf) {
 
-    var s = {}
+    var s = {};
 
     if (typeof cellXf.numFmtId != undefined)  {
       s.numFmt = SSF._table[cellXf.numFmtId];
@@ -7614,7 +7613,7 @@ function write_ws_xml_pagesetup(setup) {
     orientation: setup.orientation || 'portrait',
     horizontalDpi: setup.horizontalDpi || '4294967292',
     verticalDpi: setup.verticalDpi || '4294967292'
-  })
+  });
   return pageSetup;
 }
 
@@ -7807,7 +7806,7 @@ var parse_ws_xml_data = (function parse_ws_xml_data_factory() {
         switch (p.t) {
           case 'n':
             p.v = parseFloat(p.v);
-            if (isNaN(p.v)) p.v = "" // we don't want NaN if p.v is null
+            if (isNaN(p.v)) p.v = ""; // we don't want NaN if p.v is null
             break;
           case 's':
             // if (!p.hasOwnProperty('v')) continue;
@@ -7896,24 +7895,24 @@ function write_ws_xml(idx, opts, wb) {
   var kids = [];
   if (ws['!freeze']) {
     var pane = '';
-    pane = writextag('pane', null, ws['!freeze'])
-    kids.push(pane)
+    pane = writextag('pane', null, ws['!freeze']);
+    kids.push(pane);
 
     var selection = writextag('selection', null, {
       pane: "topLeft"
-    })
-    kids.push(selection)
+    });
+    kids.push(selection);
 
     var selection = writextag('selection', null, {
       pane: "bottomLeft"
-    })
-    kids.push(selection)
+    });
+    kids.push(selection);
 
     var selection = writextag('selection', null, {
       pane: "bottomRight",
       activeCell: ws['!freeze'],
       sqref: ws['!freeze']
-    })
+    });
     kids.push(selection)
   }
 
@@ -8648,7 +8647,7 @@ function write_wb_xml(wb, opts) {
   var hasPrintHeaders = false;
   for(var i = 0; i != wb.SheetNames.length; ++i) {
     var sheetName = wb.SheetNames[i];
-    var sheet = wb.Sheets[sheetName]
+    var sheet = wb.Sheets[sheetName];
     if (sheet['!printHeader']) {
       if (sheet['!printHeader'].length !== 2) {
         throw "!printHeaders must be an array of length 2: "+sheet['!printHeader'];
@@ -8663,7 +8662,7 @@ function write_wb_xml(wb, opts) {
     o[o.length] = '<definedNames>';
     for(var i = 0; i != wb.SheetNames.length; ++i) {
       var sheetName = wb.SheetNames[i];
-      var sheet = wb.Sheets[sheetName]
+      var sheet = wb.Sheets[sheetName];
       if (sheet['!printHeader'] || sheet['!printColumns']) {
           var printHeader = sheet['!printHeader'];
           var printColumns = sheet['!printColumns'];
@@ -8672,11 +8671,11 @@ function write_wb_xml(wb, opts) {
         var range = "";
 
         if (printColumns)  range += ("'" + sheetName + "'!")  + ("$" + printColumns[0] + ":$" + printColumns[1]);
-        if (printColumns && printHeader)  range += ","
+        if (printColumns && printHeader)  range += ",";
         if (printHeader) range += ("'" + sheetName + "'!" ) +  ("$" + printHeader[0] + ":$" + printHeader[1]);
 
-        console.log("-----------------------------")
-        console.log(range)
+        console.log("-----------------------------");
+        console.log(range);
         o[o.length] = (writextag('definedName', range, {
           "name":"_xlnm.Print_Titles",
           localSheetId : ''+i
@@ -11847,7 +11846,7 @@ function readSync(data, opts) {
 }
 
 function readFileSync(data, opts) {
-	var o = opts||{}; o.type = 'file'
+	var o = opts||{}; o.type = 'file';
   var wb = readSync(data, o);
   wb.FILENAME = data;
 	return wb;
@@ -12112,22 +12111,22 @@ var XmlNode = (function () {
 
   XmlNode.prototype.createElement = function () {
     return new XmlNode(arguments)
-  }
+  };
 
   XmlNode.prototype.children = function() {
     return this._children;
-  }
+  };
 
   XmlNode.prototype.append = function (node) {
     this._children.push(node);
     return this;
-  }
+  };
 
   XmlNode.prototype.prefix = function (prefix) {
     if (arguments.length==0) { return this._prefix;}
     this._prefix = prefix;
     return this;
-  }
+  };
 
   XmlNode.prototype.attr = function (attr, value) {
     if (value == undefined) {
@@ -12149,17 +12148,17 @@ var XmlNode = (function () {
       this._attributes[attr] = value;
     }
     return this;
-  }
+  };
 
-  var APOS = "'"; QUOTE = '"'
-  var ESCAPED_QUOTE = {  }
-  ESCAPED_QUOTE[QUOTE] = '&quot;'
-  ESCAPED_QUOTE[APOS] = '&apos;'
+  var APOS = "'"; QUOTE = '"';
+  var ESCAPED_QUOTE = {  };
+  ESCAPED_QUOTE[QUOTE] = '&quot;';
+  ESCAPED_QUOTE[APOS] = '&apos;';
 
   XmlNode.prototype.escapeAttributeValue = function(att_value) {
     return '"' + att_value.replace(/\"/g,'&quot;') + '"';// TODO Extend with four other codes
 
-  }
+  };
 
   XmlNode.prototype.toXml = function (node) {
     if (!node) node = this;
@@ -12181,7 +12180,7 @@ var XmlNode = (function () {
       xml += '/>';
     }
     return xml;
-  }
+  };
   return XmlNode;
 })();
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12259,7 +12258,7 @@ var XmlNode = (function () {
         this.$tableStyles = XmlNode('tableStyles')
             .attr('count','0')
             .attr('defaultTableStyle','TableStyleMedium9')
-            .attr('defaultPivotStyle','PivotStyleMedium4')
+            .attr('defaultPivotStyle','PivotStyleMedium4');
 
 
         this.$styles = XmlNode('styleSheet')
@@ -12293,7 +12292,7 @@ var XmlNode = (function () {
         this.defaultStyle = defaultStyle;
 
         var gray125Style = JSON.parse(JSON.stringify(defaultStyle));
-        gray125Style.fill = {patternType: "gray125", fgColor: { }}
+        gray125Style.fill = {patternType: "gray125", fgColor: { }};
 
         this.addStyles([defaultStyle, gray125Style]);
         return this;
@@ -12397,7 +12396,7 @@ var XmlNode = (function () {
 
         var $font = XmlNode('font')
             .append(XmlNode('sz').attr('val', attributes.sz || this.defaultStyle.font.sz))
-            .append(XmlNode('name').attr('val', attributes.name || this.defaultStyle.font.name))
+            .append(XmlNode('name').attr('val', attributes.name || this.defaultStyle.font.name));
 
         if (attributes.bold) $font.append(XmlNode('b'));
         if (attributes.underline)  $font.append(XmlNode('u'));
@@ -12413,7 +12412,7 @@ var XmlNode = (function () {
 
         if (attributes.color) {
           if (attributes.color.theme) {
-            $font.append(XmlNode('color').attr('theme', attributes.color.theme))
+            $font.append(XmlNode('color').attr('theme', attributes.color.theme));
 
             if (attributes.color.tint) { //tint only if theme
               $font.append(XmlNode('tint').attr('theme', attributes.color.tint))
@@ -12559,7 +12558,7 @@ var XmlNode = (function () {
         return this.$styles.toXml();
       }
     }.initialize(options||{});
-  }
+  };
 
 
 XLSX.parse_xlscfb = parse_xlscfb;

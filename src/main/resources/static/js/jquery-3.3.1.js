@@ -2808,7 +2808,7 @@
 
         return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
 
-    };
+    }
     var rsingleTag = (/^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i);
 
 
@@ -5750,7 +5750,7 @@
 
                             if (node.src && (node.type || "").toLowerCase() !== "module") {
 
-                                // Optional AJAX dependency, but won't run scripts if not present
+                                // optional AJAX dependency, but won't run scripts if not present
                                 if (jQuery._evalUrl) {
                                     jQuery._evalUrl(node.src);
                                 }
