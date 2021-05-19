@@ -459,3 +459,90 @@ catch (err) {
  * null和undefined无toString()方法
  * number对象调用toString()报SyntaxError 123..toString(); // '123', 注意是两个点！
  */
+
+/*
+  JavaScript对每个创建的对象都会设置一个原型，指向它的原型对象。
+  当我们用obj.xxx访问一个对象的属性时，JavaScript引擎先在当前对象上查找该属性，
+    如果没有找到，就到其原型对象上找，
+    如果还没有找到，就一直上溯到Object.prototype对象，
+    最后，如果还没有找到，就只能返回undefined。
+ */
+
+/*
+  创建一个Array对象
+  其原型链 arr ----> Array.prototype ----> Object.prototype ----> null
+ */
+
+/*
+  创建一个函数时
+  其原型链 foo ----> Function.prototype ----> Object.prototype ----> null
+  由于Function.prototype定义了apply()等方法，因此，所有函数都可以调用apply()方法。
+ */
+
+function Student(name) {
+  this.name = name;
+  this.hello = function () {
+    alert('Hello, ' + this.name + '!');
+  }
+}
+
+// 用关键字new来调用这个函数，并返回一个对象：
+var xiaoming = new Student('小明');
+xiaoming.name; // '小明'
+xiaoming.hello(); // Hello, 小明!
+
+/*
+  如果不写new，这就是一个普通函数，它返回undefined。
+  使用new，它就变成了一个构造函数，它绑定的this指向新创建的对象，并默认返回this
+  xiaoming ----> Student.prototype ----> Object.prototype ----> null
+ */
+
+/*
+  用new Student()创建的对象还从原型上获得了一个constructor属性，它指向函数Student本身
+ */
+
+xiaoming.constructor === Student.prototype.constructor; // true
+Student.prototype.constructor === Student; // true
+
+Object.getPrototypeOf(xiaoming) === Student.prototype; // true
+
+xiaoming instanceof Student; // true
+
+// ES6
+class Student {
+  constructor(name) {
+    this.name = name;
+  }
+
+  hello() {
+    console.log('hello {}', this.name);
+  }
+}
+
+// class的定义包含了构造函数constructor和定义在原型对象上的函数hello()
+
+var xiaoming = new Student('小明');
+xiaoming.hello();
+
+class PrimaryStudent extends Student {
+  constructor(name, grade) {
+    super(name); // 记得用super调用父类的构造方法!
+    this.grade = grade;
+  }
+
+  myGrade() {
+    alert('I am at grade ' + this.grade);
+  }
+}
+
+// http://www.example.com:8080/path/index.html?a=1&b=2#TOP
+
+location.protocol; // 'http'
+location.host; // 'www.example.com'
+location.port; // '8080'
+location.pathname; // '/path/index.html'
+location.search; // '?a=1&b=2'
+location.hash; // 'TOP'
+
+
+
