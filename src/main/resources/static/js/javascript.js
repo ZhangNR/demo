@@ -436,7 +436,8 @@ ajax('http://url-1', data1, function (err, result) {
   });
 });
 
-try {
+/*
+  try {
   r1 = yield ajax('http://url-1', data1);
   r2 = yield ajax('http://url-2', data2);
   r3 = yield ajax('http://url-3', data3);
@@ -445,6 +446,7 @@ try {
 catch (err) {
   handle(err);
 }
+ */
 
 /**
  * 不要使用new Number()、new Boolean()、new String()创建包装对象；
@@ -509,7 +511,7 @@ Object.getPrototypeOf(xiaoming) === Student.prototype; // true
 xiaoming instanceof Student; // true
 
 // ES6
-class Student {
+class Student{
   constructor(name) {
     this.name = name;
   }
@@ -524,7 +526,7 @@ class Student {
 var xiaoming = new Student('小明');
 xiaoming.hello();
 
-class PrimaryStudent extends Student {
+class PrimaryStudent extends Student{
   constructor(name, grade) {
     super(name); // 记得用super调用父类的构造方法!
     this.grade = grade;

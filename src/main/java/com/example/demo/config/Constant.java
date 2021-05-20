@@ -13,11 +13,6 @@ public class Constant {
     }
 
     /**
-     * 文件保存位置
-     */
-    public static final String FILE_PATH = "/data/oa/demo/";
-
-    /**
      * 分公司
      */
     public static final String CORPID = "ding803030f55b77d1fd35c2f4657eb6378f";

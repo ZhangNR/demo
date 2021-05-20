@@ -1,0 +1,59 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /demo
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/publish?useSSL=false&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
+    username: gdc_oa
+    password: gdc_oa&pjm-!4map
+  mvc:
+    static-path-pattern: /static/**
+  web:
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/
+  thymeleaf:
+    encoding: utf-8
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+  mail:
+    host: smtp.qiye.163.com
+    protocol: smtp
+    port: 465
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:zjp}
+    ssl: ${REDIS_SSL:false}
+    database: ${REDIS_DATABASE:0}
+logging:
+  file:
+    name: /www/logs/demo/demo.log
+  level:
+    root: info
+    com.example.demo.mapper: debug
+# 从配置文件读取一些属性
+file:
+  upload-path: D:\files\
+app:
+  version: 1.0
+storage:
+  local:
+    # 文件存储根目录:
+    root-dir: ${STORAGE_LOCAL_ROOT:D:\files\}
+    # 最大文件大小，默认100K:
+    max-size: ${STORAGE_LOCAL_MAX_SIZE:102400}
+    # 是否允许空文件:
+    allow-empty: false
+    # 允许的文件类型:
+    allow-types: jpg, png, gif
+# Actuator 通过URL/actuator/挂载一些监控点
+# http://localhost:8080/demo/actuator/health(info/beans/metrics)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health, beans, metrics

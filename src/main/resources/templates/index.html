@@ -35,7 +35,7 @@
 <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.10.3/dingtalk.open.js"></script>
 <script>
   const CORP_ID = "ding803030f55b77d1fd35c2f4657eb6378f";
-  let vm = new Vue({
+  const vm = new Vue({
     el: "#app",
     data() {
       return {
@@ -84,7 +84,7 @@
         }
       },
       /* 上传文件 */
-      postUploadFileData(param) {
+      postUploadFileData2(param) {
         let code;
         let errorMsg;
         let formData = new FormData();
@@ -110,7 +110,7 @@
               WebData.authCode.push(res.code);
             }, (err) => {
               console.log(err);
-              window.location.href = "../view/error?errorMsg=" + err.errorMessage + " [" + err.errorCode + "]";
+              // window.location.href = "../view/error?errorMsg=" + err.errorMessage + " [" + err.errorCode + "]";
             });
           });
           Promise.all(promise).then((result) => {
@@ -118,7 +118,7 @@
             //上传
             console.log('WebData' + JSON.stringify(WebData));
             formData.append('WebData', JSON.stringify(WebData));
-            axios.post('../web/uploadFile', formData).then(response => {
+            axios.post('../upload/uploadFile', formData).then(response => {
               console.log(response.data);
               const loading = this.$loading({
                 lock: true,
@@ -160,6 +160,41 @@
             });
 
           });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消上传'
+          });
+        });
+      },
+      postUploadFileData(param) {
+        let formData = new FormData();
+
+        this.$confirm('是否上传文件?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let WebData = {
+            uploadType: '代发',
+            year: 2020,
+            month: 11,
+            authCode: []
+          };
+          console.log(this.formFileList);
+          this.formFileList.forEach((param, index) => {
+            formData.append('files', param.raw);
+          });
+          //上传
+          console.log('WebData' + JSON.stringify(WebData));
+          formData.append('WebData', JSON.stringify(WebData));
+          axios.post('../upload/uploadFile', formData).then(response => {
+            console.log(response.data);
+
+          }).catch(function (error) {
+            console.log(error);
+          });
+
         }).catch(() => {
           this.$message({
             type: 'info',

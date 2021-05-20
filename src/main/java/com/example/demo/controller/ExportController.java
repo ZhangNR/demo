@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.demo.entity.MonthlyReportSingleProject;
 import com.example.demo.entity.PubProject;
@@ -10,6 +9,7 @@ import com.example.demo.service.IPubProjectService;
 import com.example.demo.untils.ExcelUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @Api(tags = "导入导出模块")
+@Slf4j
 public class ExportController {
 
     private final IPubProjectService service;
@@ -67,7 +69,7 @@ public class ExportController {
 
     @ApiOperation(value = "导入", notes = "出版便捷录入测试")
     @PostMapping("import")
-    public void excelImport(MultipartFile file, HttpServletResponse response) throws Exception {
+    public void excelImport(MultipartFile file, HttpServletResponse response) throws IOException {
         String[] excelHeader = {"系统编号", "部门编号", "部门", "项目组编号", "项目组", "大项", "名称", "年份", "月份", "勘察日期", "专业", "设计费", "设计人员", "附件", "备注", "状态", "出版状态", "创建人", "创建时间", "更新时间", "单册编号"};
         String[] excelHeaderKey = {"id", "dept_id", "dept_name", "sub_dept_id", "sub_dept_name", "parent_project", "name", "year", "month", "survey_date", "major", "design_money",
                 "designer_team", "files", "note", "state", "pub_state", "creator_name", "create_date", "update_date", "pub_project_num"};
@@ -85,8 +87,7 @@ public class ExportController {
             updateWrapper.set("pub_state", "已锁定").eq("id", id);
             monthlyReportSingleProjectService.update(updateWrapper);
         });
-        System.out.println(idsAll);
-        System.out.println("长度：" + idsAll.size());
+        log.info("ids length {} , {}", idsAll.size(), idsAll);
 
         pubList.forEach(pub -> {
             String pubProjectNum = (String) pub.get("pub_project_num");
@@ -103,25 +104,10 @@ public class ExportController {
 
         });
 
-        List<PubProject> pubProjects = JSONArray.parseArray(JSON.toJSONString(pubList), PubProject.class);
-        System.out.println(JSON.toJSONString(pubProjects));
+        List<PubProject> pubProjects = JSON.parseArray(JSON.toJSONString(pubList), PubProject.class);
+        log.info(JSON.toJSONString(pubProjects));
 
         service.saveBatch(pubProjects);
-
-
-//        ExcelUtils.exportExcel(response, excelHeader, excelHeaderKey, list, "出版", "出版数据");
-
-        /*list.stream().collect(Collectors.groupingBy(t -> t.get("pub_project_num") == "" ? "0" : t.get("pub_project_num"), Collectors.toList())).forEach((key, groupMap) -> {
-            if (!"0".equals(key)) {
-                System.out.println(key);
-
-                List<Integer> ids = groupMap.stream().map(item -> (Integer) item.get("id")).collect(Collectors.toList());
-                BigDecimal sum = groupMap.stream().map(item -> new BigDecimal((String) item.get("design_money"))).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                System.out.println(JSON.toJSONString(ids));
-                System.out.println(sum);
-            }
-        });*/
 
     }
 

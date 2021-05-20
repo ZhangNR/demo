@@ -8,6 +8,7 @@ import com.example.demo.entity.WebExchangeInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +30,12 @@ import java.io.File;
 @Slf4j
 public class UploadController {
 
+    /**
+     * 从配置properties文件中读取file.upload-path 的值
+     */
+    @Value("${file.upload-path}")
+    private String path;
+
     @ApiOperation(value = "上传文件", notes = "上传文件并携带数据")
     @PostMapping("uploadFile")
     public JSONObject uploadFile(@RequestParam("WebData") String webData, @RequestParam("files") MultipartFile[] file) {
@@ -38,8 +45,7 @@ public class UploadController {
         JSONObject jsonResult = new JSONObject();
 
         try {
-
-            String path = Constant.FILE_PATH;
+            log.info(path);
             if (webExchangeInfo.getMonth() < 10) {
                 path += webExchangeInfo.getYear() + "-0" + webExchangeInfo.getMonth() + "/";
             } else {
