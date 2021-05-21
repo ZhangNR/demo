@@ -34,18 +34,6 @@ public class ProjectApprovalProject implements Serializable {
     private Integer year;
 
     /**
-     * 运营商编号
-     */
-    @TableField("operators_num")
-    private String operatorsNum;
-
-    /**
-     * 合作方编号
-     */
-    @TableField("partner_num")
-    private String partnerNum;
-
-    /**
      * 合作比例
      */
     @TableField("cooperate_ratio")
@@ -94,18 +82,6 @@ public class ProjectApprovalProject implements Serializable {
     private String subDeptName;
 
     /**
-     * 税号
-     */
-    @TableField("customer_tax_number")
-    private String customerTaxNumber;
-
-    /**
-     * 地址
-     */
-    @TableField("customer_address")
-    private String customerAddress;
-
-    /**
      * 客户名称
      */
     @TableField("customer_name")
@@ -124,24 +100,6 @@ public class ProjectApprovalProject implements Serializable {
     private String customerContactPhone;
 
     /**
-     * 客户银行名
-     */
-    @TableField("customer_bank_name")
-    private String customerBankName;
-
-    /**
-     * 客户银行账号
-     */
-    @TableField("customer_bank_account")
-    private String customerBankAccount;
-
-    /**
-     * 客户附件
-     */
-    @TableField("customer_files")
-    private String customerFiles;
-
-    /**
      * 立项依据类型
      */
     @TableField("basis_type")
@@ -152,12 +110,6 @@ public class ProjectApprovalProject implements Serializable {
      */
     @TableField("basis_files")
     private String basisFiles;
-
-    /**
-     * 是否出版
-     */
-    @TableField("publish")
-    private String publish;
 
     /**
      * 项目收入
@@ -206,6 +158,5 @@ public class ProjectApprovalProject implements Serializable {
      */
     @TableField("update_date")
     private LocalDateTime updateDate;
-
 
 }

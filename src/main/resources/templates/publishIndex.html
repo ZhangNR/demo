@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>文件出版</title>
+    <!--<link rel="Shortcut Icon" href="../static/img/icon.png" type="image/x-icon"/>-->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="stylesheet" href="../static/elementUI/index.css">
+    <link rel="stylesheet" href="../static/css/publish-index.css">
+</head>
+<body>
+<div id="app" v-cloak>
+    <el-container v-loading.fullscreen.lock="loading">
+        <el-header height="100px">
+            <el-breadcrumb separator="/" style="line-height: 1.5;">
+                <el-breadcrumb-item :to="{ path:'/' }">原创</el-breadcrumb-item>
+                <el-breadcrumb-item>文件出版模块</el-breadcrumb-item>
+            </el-breadcrumb>
+            <el-form :model="user" status-icon ref="deptForm" :inline="true" size="small" style="margin-bottom: 0;margin-top: 10px">
+                <el-form-item label="部门" label-width="60px">
+                    <el-select v-model="user.deptName" placeholder="选择部门" v-if="user.depts.length > 1" @change="deptChange">
+                        <el-option v-for="(d,i) in user.depts" :value="d" :key="i"></el-option>
+                    </el-select>
+                    <el-tag type="info" v-else>{{user.deptName}}</el-tag>
+                </el-form-item>
+                <el-form-item label="项目组" label-width="60px">
+                    <el-select v-model="user.subDeptName" placeholder="选择项目组" v-if="user.subDepts.length > 1" @change="subDeptChange">
+                        <el-option v-for="(d,i) in user.subDepts" :label="d.subDeptName == '' ? '无': d.subDeptName" :value="d.subDeptName"
+                                   :key="i"></el-option>
+                    </el-select>
+                    <el-tag type="info" v-else>{{user.subDeptName == '' ? '无': user.subDeptName}}
+                    </el-tag>
+                </el-form-item>
+                <el-form-item label="年" label-width="60px">
+                    <el-date-picker v-model="year" type="year" placeholder="选择年" value-format="yyyy" @change="yearChange">
+                    </el-date-picker>
+                </el-form-item>
+            </el-form>
+        </el-header>
+        <el-container>
+
+            <!--<el-aside style="width: 330px; border-right: 2px solid #eee;box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);">-->
+            <el-aside width="330px">
+                <ul class="list" style="padding-bottom: 30px;padding-left: 20px">
+                    <div v-if="approvalList.length == 0">
+                        <li class="list-item" @click="tabClick(0)"> 未找到立项项目</li>
+                    </div>
+                    <li v-for="(item,i) in approvalList" :key="i" class="list-item" @click="tabClick(item.id)">{{item.name}}</li>
+                </ul>
+                <div style="text-align: center;position: fixed; bottom: 0; width: 320px;background-color: #FFF;">
+                    <el-pagination background prev-text="上一页" next-text="下一页" :page-size="approval.pageSize" :hide-on-single-page="true"
+                                   :current-page.sync="approval.currentPage" layout="prev, next" :total="approval.total"
+                                   @current-change="approvalCurrentChange"></el-pagination>
+                </div>
+            </el-aside>
+            <el-main v-loading="mainLoading" style="padding-top: 0">
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-card shadow="always" :body-style="{ padding: '0px' }">
+                            <div style="padding: 14px;">
+                                <span class="card-font">{{form.name === '' ? '&nbsp;' : form.name}}</span>
+                                <div class="bottom clearfix">
+                                    <time class="time">立项项目信息</time>
+                                    <el-button type="text" class="button" @click="more">更多</el-button>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-card shadow="always" :body-style="{ padding: '0px' }">
+                            <div style="padding: 14px;">
+                                <span class="card-font">{{count}}</span>
+                                <div class="bottom clearfix">
+                                    <time class="time">单册数量</time>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-card shadow="always" :body-style="{ padding: '0px' }">
+                            <div style="padding: 14px;">
+                                <span class="card-font">{{sum}}</span>
+                                <div class="bottom clearfix">
+                                    <time class="time">单册总金额</time>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                </el-row>
+
+
+                <el-row :gutter="20" style="margin: 10px 0;">
+                    <el-col :span="18" style="padding-left: 0;">
+                        <el-button type="primary" @click="add" :disabled="addButtonController" size="small"><i class="el-icon-plus"></i>新建单册
+                        </el-button>
+                        <el-button type="primary" @click="exportPub" size="small"><i class="el-icon-download"></i>单册导出</el-button>
+                        <!--<el-upload ref="upload" class="upload-demo" action="../project/importExcel" :on-success="importExcel"-->
+                        <!--:on-progress="progressing"-->
+                        <!--:show-file-list="false" :data="{userId: user.userId,name: user.name}" size="small">-->
+                        <!--<el-button slot="trigger" size="small" type="primary" icon="el-icon-upload2">数据导入</el-button>-->
+                        <!--</el-upload>-->
+                        <el-button type="primary" @click="importModule" size="small"><i class="el-icon-download"></i>导出模板</el-button>
+                        <el-upload ref="upload" class="upload-demo" action :before-upload="readExcel"
+                                   :show-file-list="false" :data="{userId: user.userId,name: user.name}" size="small">
+                            <el-button slot="trigger" size="small" type="primary" icon="el-icon-upload2">数据导入</el-button>
+                        </el-upload>
+                    </el-col>
+                    <el-col :span="6" style="padding-right: 0;">
+                        <el-input placeholder="请输入单册名称搜索" v-model.trim="searchValue" clearable size="small">
+                            <el-button slot="append" icon="el-icon-search" @click="searchPublishProjects"></el-button>
+                        </el-input>
+                    </el-col>
+                </el-row>
+                <el-table :data="publishProjectList" border style="width: 100%" size="small">
+                    <el-table-column label="状态" width="100" prop="state" align="center">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.state != null">
+                                <el-tag v-if="scope.row.state == '审核通过'" type="success">审核通过</el-tag>
+                                <el-tag v-else-if="scope.row.state == '审核失败'" type="danger">审核失败</el-tag>
+                                <el-tag v-else-if="scope.row.state == '提交'">审核中</el-tag>
+                                <el-tag v-else type="info">{{scope.row.state}}</el-tag>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="单册编号" width="180" prop="pubProjectNum">
+                    </el-table-column>
+                    <el-table-column label="单册名称" min-width="200" prop="pubProjectName">
+                    </el-table-column>
+                    <el-table-column label="单项清单" width="100" prop="singleProjectIds" align="center">
+                        <template slot-scope="scope">
+                            <div v-if="showRead(scope.row)">
+                                <el-button size="mini" @click="read(scope.$index, scope.row, true)">查看</el-button>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="月度报表预估产值" width="110" prop="sumDesignMoney">
+                    </el-table-column>
+                    <el-table-column label="出版勘察设计费（降点后含税）" width="120" prop="publishMoney">
+                    </el-table-column>
+                    <el-table-column label="偏差" width="80" align="center">
+                        <template slot-scope="scope">
+                            <el-tag type="danger" v-if="scope.row.deviation == null"> 100%</el-tag>
+                            <el-tag type="danger" v-else-if="scope.row.deviation > 0.1"> {{parseInt(scope.row.deviation*100)}}%</el-tag>
+                            <el-tag type="success" v-else>{{parseInt(scope.row.deviation*100)}}%</el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="创建人" width="90" prop="creatorName" align="center" v-if="user.isLeader"></el-table-column>
+                    <el-table-column label="操作" width="100" fixed="right">
+                        <template slot-scope="scope">
+                            <el-button size="mini" @click="handleView(scope.$index, scope.row)" icon="el-icon-more"
+                                       v-if="setDisable(scope.row)">详情
+                            </el-button>
+                            <el-dropdown trigger="click" @command="handleCommand" v-else>
+                                <el-button type="primary" size="mini">操作<i class="el-icon-arrow-down el-icon--right"></i>
+                                </el-button>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item icon="el-icon-edit"
+                                                      :command="beforeHandleCommand(scope.$index, scope.row,'edit')">修改
+                                    </el-dropdown-item>
+                                    <el-dropdown-item icon="el-icon-check"
+                                                      :command="beforeHandleCommand(scope.$index, scope.row,'commit')">提交
+                                    </el-dropdown-item>
+                                    <el-dropdown-item icon="el-icon-delete"
+                                                      :command="beforeHandleCommand(scope.$index, scope.row,'del')">删除
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div class="pagination">
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :hide-on-single-page="true"
+                                   :page-sizes="[10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+                                   :total="total">
+                    </el-pagination>
+                </div>
+
+            </el-main>
+        </el-container>
+        <el-drawer title="立项项目详细信息" :visible.sync="drawer" direction="rtl" size="30%">
+            <el-form ref="form" :model="form" label-width="120px">
+                <el-form-item label="年份">
+                    <el-input v-model="form.year" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="项目名称">
+                    <el-input v-model="form.name" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="合作比例">
+                    <el-input v-model="form.cooperateRatio" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="项目类型">
+                    <el-input v-model="form.type" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="项目属性">
+                    <el-input v-model="form.attribute" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="部门名称">
+                    <el-input v-model="form.deptName" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="项目组名称">
+                    <el-input v-model="form.subDeptName" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="客户名称">
+                    <el-input v-model="form.customerName" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="客户联系人">
+                    <el-input v-model="form.customerContactName" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="客户联系电话">
+                    <el-input v-model="form.customerContactPhone" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="立项依据">
+                    <el-input v-model="form.basisType" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="项目收入">
+                    <el-input v-model="form.projectIncome" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="项目创建人">
+                    <el-input v-model="form.creatorName" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="项目创建时间">
+                    <el-input v-model="form.createDate" readonly></el-input>
+                </el-form-item>
+            </el-form>
+        </el-drawer>
+
+        <el-drawer title="修改立项" :visible.sync="approvalDrawer" direction="rtl" size="540px">
+            <ul class="list2" style="padding-left: 10px">
+                <div v-for="(item,i) in allApprovalList" :key="i">
+                    <li class="list-item2 active" @click="switchApproval(item)" v-if="item.id == pubForm.projectApprovalId">{{item.name}}</li>
+                    <li class="list-item2" @click="switchApproval(item)" v-else>{{item.name}}</li>
+                </div>
+
+            </ul>
+
+            <div class="el-drawer__footer">
+                <el-button @click="approvalDrawer = false" size="small">取消</el-button>
+            </div>
+        </el-drawer>
+
+        <el-drawer title="已选择单项清单" :visible.sync="singleDrawerVisible" direction="rtl" size="100%">
+            <el-table :data="readTable" size="small" border>
+                <el-table-column label="项目名称" width="140" prop="parentProject" align="center">
+                </el-table-column>
+                <el-table-column label="单项名称" min-width="200" prop="name" header-align="center">
+                </el-table-column>
+                <el-table-column label="勘查日期" width="140" prop="surveyDate" align="center">
+                    <template slot-scope="scope">
+                        <i class="el-icon-time"></i>
+                        <span style="margin-left: 5px">{{ scope.row.surveyDate }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="专业" width="120" prop="major" align="center">
+                </el-table-column>
+                <el-table-column label="创建人" width="120" prop="creatorName" align="center">
+                </el-table-column>
+                <el-table-column label="设计费用" width="120" prop="designMoney" align="right" header-align="center">
+                </el-table-column>
+                <el-table-column label="备注" min-width="160" prop="note" header-align="center">
+                </el-table-column>
+            </el-table>
+        </el-drawer>
+
+        <el-dialog :visible.sync="pubExportDialog" :close-on-click-modal="false" :close-on-press-escape="false" title="单册数据导出" width="800px"
+                   @closed="pubExportDialog = false">
+            <el-divider content-position="left">导出条件</el-divider>
+            <el-form :model="exportForm" ref="exportForm" label-width='50px' size="small" style="width: 600px">
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-form-item label="关联立项" label-width='80px'>
+                            <el-radio-group v-model="exportForm.approval">
+                                <el-radio label="1">全部立项</el-radio>
+                                <el-radio label="2">仅当前立项</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="状态">
+                            <el-select v-model="exportForm.state" clearable placeholder="请选择出版状态">
+                                <el-option label="保存" value="保存"></el-option>
+                                <el-option label="审核中" value="提交"></el-option>
+                                <el-option label="审核通过" value="审核通过"></el-option>
+                                <el-option label="审核失败" value="审核失败"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+            </el-form>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="pubExportDialog = false" size="small">取消</el-button>
+                <el-button @click="exportPubExcel" type="primary" size="small">导出</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog :visible.sync="excelDialog" fullscreen :close-on-click-modal="false" :close-on-press-escape="false" title="导入出版数据"
+                   @closed="excelDialog = false">
+            <el-table :data="excelData" size="small">
+                <el-table-column label="单册编号" width="180" prop="pubProjectNum">
+                </el-table-column>
+                <el-table-column label="单册名称" min-width="200" prop="pubProjectName">
+                </el-table-column>
+                <el-table-column label="单项清单" width="100" prop="singleProjectIds" align="center">
+                    <template slot-scope="scope">
+                        <div v-if="showRead(scope.row)">
+                            <el-button size="mini" @click="read(scope.$index, scope.row, false)">查看</el-button>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="月度报表预估产值" width="110" prop="sumDesignMoney">
+                </el-table-column>
+                <el-table-column label="出版勘察设计费（降点后含税）" width="120" prop="publishMoney">
+                </el-table-column>
+                <el-table-column label="偏差" width="80" align="center">
+                    <template slot-scope="scope">
+                        <el-tag type="danger" v-if="scope.row.deviation == null"> 100%</el-tag>
+                        <el-tag type="danger" v-else-if="scope.row.deviation > 0.1"> {{parseInt(scope.row.deviation*100)}}%</el-tag>
+                        <el-tag type="success" v-else>{{parseInt(scope.row.deviation*100)}}%</el-tag>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="excelDialog = false" size="small">取消</el-button>
+                <el-button @click="excelOk" size="small" type="primary">保存</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog :visible.sync="pubDialogVisible" width="800px" :close-on-click-modal="false" :close-on-press-escape="false"
+                   @closed="pubDialogClosed">
+            <div slot="title" class="header-title" v-if="pubForm.id == ''">
+                <span>新增单册 </span>
+                <el-tooltip class="item" effect="dark" content="填写项目编号,填写单册编号与名称,筛选单项" placement="right">
+                    <i class="el-icon-warning-outline"></i>
+                </el-tooltip>
+            </div>
+            <div slot="title" class="header-title" v-else>
+                <span> 单册信息 </span>
+            </div>
+            <el-form :model="pubForm" status-icon :rules="rules" ref="pubForm" style="width: 600px" size="small">
+                <!--<el-form-item label="项目编号" prop="num" :label-width="formLabelWidth">
+                    <el-input v-model.trim="pubForm.num" placeholder="例: S202848-06 | N172605-01-303 | 140152-04-201" clearable></el-input>
+                </el-form-item>-->
+                <el-form-item label="立项编号" :label-width="formLabelWidth">
+                    <el-tag type="info">{{pubForm.projectApprovalId}}</el-tag>
+                    <el-button type="primary" size="small" @click="reviseApproval" v-if="pubForm.id != ''">修改立项</el-button>
+                </el-form-item>
+                <el-form-item label="单册编号" prop="pubProjectNum" :label-width="formLabelWidth">
+                    <el-input v-model.trim="pubForm.pubProjectNum" placeholder="例: 203087-01-1" clearable
+                              :disabled="pubDialogFormDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="单册名称" prop="pubProjectName" :label-width="formLabelWidth">
+                    <el-input v-model.trim="pubForm.pubProjectName" placeholder="例: 深圳分公司2020年有线接入网光缆线路工程一期" clearable
+                              :disabled="pubDialogFormDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="单项清单" :label-width="formLabelWidth">
+                    <el-button type="primary" icon="el-icon-plus" size="small" @click='chooseSingleProject'
+                               :disabled="pubDialogFormDisabled">选择
+                    </el-button>
+                    <el-button type="success" icon="el-icon-view" size="small" v-if="showRead(pubForm)" @click="read2">查看</el-button>
+                </el-form-item>
+                <el-form-item label="月度报表预估产值" prop="sumDesignMoney" :label-width="formLabelWidth">
+                    <el-input v-model="pubForm.sumDesignMoney" autocomplete="off" :readonly='true'></el-input>
+                </el-form-item>
+                <el-form-item label="出版勘察设计费" prop="publishMoney" :label-width="formLabelWidth">
+                    <el-input v-model="pubForm.publishMoney" placeholder="例: 100.00, 最多保存两位小数" @input="inputChange(pubForm.publishMoney)"
+                              clearable :disabled="pubDialogFormDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="偏差" :label-width="formLabelWidth">
+                    <template slot-scope="scope">
+                        <el-tag :type="deviationClass">{{ deviation }}</el-tag>
+                    </template>
+                </el-form-item>
+                <el-form-item label="附件" :label-width="formLabelWidth">
+                    <el-upload class="upload-demo" ref="upload" action="../file/upload"
+                               :data="extra"
+                               name="file"
+                               :file-list="pubForm.fileList"
+                               :on-success="uploadSuccess"
+                               :on-error="uploadError"
+                               :before-remove="beforeRemove"
+                               :on-remove="fileRemove"
+                               :before-upload="beforeUpload"
+                               :disabled="pubDialogFormDisabled"
+                               multiple>
+                        <el-button size="small" type="primary" icon="el-icon-upload">点击上传</el-button>
+                    </el-upload>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="pubDialogVisible = false" size="small">取消</el-button>
+                <el-button type="warning" @click="deletePub('pubForm')" v-show="!pubDialogFormDisabled" size="small">删除</el-button>
+                <el-button type="primary" @click="commit('pubForm')" v-show="!pubDialogFormDisabled" size="small">提交</el-button>
+                <el-button type="primary" @click="save('pubForm')" v-show="!pubDialogFormDisabled" size="small">保存</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog :visible.sync="singleDialogVisible" :fullscreen="true" @close="closeSingleDialog" :close-on-click-modal="false"
+                   :close-on-press-escape="false">
+            <div slot="title" class="dialog-title">
+                <span class="title-text"><i class="el-icon-edit-outline"></i>选择单项</span>
+                <el-tag type="danger"><i class="el-icon-error"></i> 表格中出现红色背景，表示当前选中的单项已被其他人引用，请手动取消勾选！</el-tag>
+            </div>
+            <el-divider content-position="left">查询条件</el-divider>
+            <el-form :model="searchForm" ref="searchForm" :inline="true" label-width='50px' size="small">
+                <el-form-item label="项目名称" label-width='80px'>
+                    <el-input v-model="searchForm.project" placeholder="例: 2020年本地传送网工程" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="单项名称" label-width='80px'>
+                    <el-input v-model="searchForm.name" placeholder="例: 中国移动通信集团*****传输项目" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="专业">
+                    <el-select v-model="searchForm.major" clearable placeholder="请选择">
+                        <el-option v-for="item in majorList" :key="item.id" :label="item.major" :value="item.major">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="创建人" label-width='60px'>
+                    <el-input v-model="searchForm.creatorName" placeholder="例: 张三" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="年">
+                    <el-input v-model="searchForm.year" placeholder="例: 2020" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="月份">
+                    <el-input v-model="searchForm.month" placeholder="例: 7" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="勘查日期范围" label-width='120px'>
+                    <el-date-picker v-model="searchForm.date" type="daterange" align="left" unlink-panels range-separator="至"
+                                    start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
+                                    value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="备注">
+                    <el-input v-model="searchForm.note" placeholder="请输入关键字" clearable></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="search">查询</el-button>
+                </el-form-item>
+            </el-form>
+            <el-radio-group v-model="queryType" @change="typeChange" size="small">
+                <el-radio-button label="0">所有未出版的单项</el-radio-button>
+                <el-radio-button label="1">已选择的单项</el-radio-button>
+            </el-radio-group>
+
+            <div v-if="queryType == 0">
+                <el-table :data="singleProjectTable" ref="singleTable" border style="width: 100%" :fullscreen="true"
+                          tooltip-effect="dark" :row-key="getRowKeys" :row-class-name="tableRowClassName" @select="handleSelect"
+                          @select-all="handleSelectAll" size="small">
+                    <el-table-column type="selection" width="55" :reserve-selection="true" align="center"></el-table-column>
+                    <el-table-column label="项目名称" width="140" prop="parentProject" header-align="center">
+                    </el-table-column>
+                    <el-table-column label="单项名称" min-width="200" prop="name" header-align="center">
+                    </el-table-column>
+                    <el-table-column label="年份" width="60" prop="year" align="center">
+                    </el-table-column>
+                    <el-table-column label="月份" width="60" prop="month" align="center">
+                    </el-table-column>
+                    <el-table-column label="勘查日期" width="120" prop="surveyDate" align="center">
+                    </el-table-column>
+                    <el-table-column label="专业" width="120" prop="major" align="center">
+                    </el-table-column>
+                    <el-table-column label="创建人" width="120" prop="creatorName" align="center">
+                    </el-table-column>
+                    <el-table-column label="设计费用" width="120" prop="designMoney" align="right" header-align="center">
+                    </el-table-column>
+                    <el-table-column label="备注" min-width="160" prop="note" header-align="center">
+                    </el-table-column>
+                </el-table>
+                <div class="pagination">
+                    <el-pagination @size-change="handleSizeChange2" @current-change="handleCurrentChange2" :page-sizes="[10, 15, 20]"
+                                   :hide-on-single-page="true"
+                                   layout="total, sizes, prev, pager, next, jumper" :page-size="searchForm.pageSize"
+                                   :current-page.sync="searchForm.currentPage"
+                                   :total="searchForm.total">
+                    </el-pagination>
+                </div>
+            </div>
+            <div v-if="queryType == 1">
+                <el-table
+                        :data="singleProjectChooseTable.slice((showForm.currentPage - 1) * showForm.pageSize, showForm.currentPage * showForm.pageSize)"
+                        ref="singleProjectChoose" border style="width: 100%" tooltip-effect="dark" :row-key="getRowKeys"
+                        :row-class-name="tableRowClassName" @select="handleSelect2" @select-all="handleSelectAll2" size="small">
+                    <el-table-column type="selection" width="55" :reserve-selection="true" align="center"></el-table-column>
+                    <el-table-column label="项目名称" width="140" prop="parentProject" header-align="center">
+                    </el-table-column>
+                    <el-table-column label="单项名称" min-width="200" prop="name" header-align="center">
+                    </el-table-column>
+                    <el-table-column label="年份" width="60" prop="year" align="center">
+                    </el-table-column>
+                    <el-table-column label="月份" width="60" prop="month" align="center">
+                    </el-table-column>
+                    <el-table-column label="勘查日期" width="120" prop="surveyDate" align="center">
+                    </el-table-column>
+                    <el-table-column label="专业" width="120" prop="major" align="center">
+                    </el-table-column>
+                    <el-table-column label="创建人" width="120" prop="creatorName" align="center">
+                    </el-table-column>
+                    <el-table-column label="设计费用" width="120" prop="designMoney" align="right" header-align="center">
+                    </el-table-column>
+                    <el-table-column label="备注" min-width="160" prop="note" header-align="center">
+                    </el-table-column>
+                </el-table>
+                <div class="pagination">
+                    <el-pagination @size-change="handleSizeChange3" @current-change="handleCurrentChange3"
+                                   :page-sizes="[10, 15, 20]" layout="total, sizes, prev, pager, next, jumper"
+                                   :page-size="showForm.pageSize" :current-page.sync="showForm.currentPage"
+                                   :total="singleProjectChooseTable.length">
+                    </el-pagination>
+                </div>
+            </div>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="cancel" size="small">取消</el-button>
+                <el-button type="primary" @click="confirm" size="small">确定</el-button>
+            </div>
+        </el-dialog>
+
+
+    </el-container>
+</div>
+</body>
+<script src="../static/vue/vue.js"></script>
+<script src="../static/vue/axios.min.js"></script>
+<script src="../static/elementUI/index.js"></script>
+<script src="../static/js/xlsx.js"></script>
+<script src="../static/js/big.js"></script>
+<script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.10.3/dingtalk.open.js"></script>
+<script src="../static/js/publish.js?v=5.2"></script>
+</html>

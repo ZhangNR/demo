@@ -177,7 +177,7 @@ public class ExcelUtils {
     /**
      * 表头样式
      */
-    private static CellStyle headerStyle(Workbook workbook) {
+    public static CellStyle headerStyle(Workbook workbook) {
         Font font = workbook.createFont();
         font.setFontName("宋体");
         font.setFontHeightInPoints((short) 11);
@@ -189,7 +189,7 @@ public class ExcelUtils {
     /**
      * 内容样式
      */
-    private static CellStyle contentStyle(Workbook workbook) {
+    public static CellStyle contentStyle(Workbook workbook) {
         Font font = workbook.createFont();
         font.setFontName("宋体");
         font.setFontHeightInPoints((short) 10);

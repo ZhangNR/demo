@@ -28,4 +28,24 @@ public class Constant {
      */
     public static final String PRODUCTION_DEPARTMENT_NAME = "生产部门";
     public static final String CHECK_TRUE = "是";
+
+    public static final String STATE_SAVE = "保存";
+    public static final String STATE_COMMIT = "提交";
+    public static final String STATE_PASSED = "审核通过";
+    public static final String STATE_FAIL = "审核失败";
+    public static final String STATE_CLOCK = "已锁定";
+    public static final String STATE_UNPUBLISH = "未出版";
+    public static final String STATE_PUBLISHING = "出版中";
+    public static final String STATE_PUBLISHED = "已出版";
+
+    /**
+     * 审批实例状态
+     */
+    public static final String TYPE = "type";
+    public static final String TYPE_START = "start";
+    public static final String TYPE_FINISH = "finish";
+    public static final String TYPE_TERMINATE = "terminate";
+    public static final String RESULT = "result";
+    public static final String RESULT_AGREE = "agree";
+    public static final String RESULT_REFUSE = "refuse";
 }

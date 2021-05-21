@@ -31,4 +31,9 @@ public class ViewController {
         return "imageConversion";
     }
 
+    @GetMapping("publish")
+    private String publishIndex() {
+        return "publishIndex";
+    }
+
 }

@@ -1,10 +1,8 @@
 package com.example.demo.mapper;
 
 import com.example.demo.entity.PerformanceDetailVO;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,8 +10,6 @@ import java.util.List;
  * @author zjp
  * @since 2020-09-23
  */
-@Repository
-@Mapper
 public interface PerformanceDetailMapper {
 
     /**

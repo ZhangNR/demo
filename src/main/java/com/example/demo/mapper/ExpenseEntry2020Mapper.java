@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.demo.entity.ExpenseEntry2020;
 import com.example.demo.entity.ExpenseVO;
 import com.example.demo.entity.PerformanceDetailVO;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,8 +18,6 @@ import java.util.List;
  * @author zjp
  * @since 2020-09-25
  */
-@Repository
-@Mapper
 public interface ExpenseEntry2020Mapper extends BaseMapper<ExpenseEntry2020> {
 
 

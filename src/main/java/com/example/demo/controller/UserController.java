@@ -38,7 +38,7 @@ public class UserController {
      * 把User写入Redis:
      */
     private void putUserIntoRedis(User user) throws Exception {
-        redisService.hset(KEY_USERS, String.valueOf(user.getId()), objectMapper.writeValueAsString(user));
+        redisService.hset(KEY_USERS, "1", objectMapper.writeValueAsString(user));
     }
 
     /**
@@ -59,7 +59,7 @@ public class UserController {
     public ModelAndView doSignin(@RequestParam("email") String email, @RequestParam("password") String password, HttpSession session) throws Exception {
         try {
             User user = userService.signin(email, password);
-            session.setAttribute(KEY_USER_ID, user.getId());
+            session.setAttribute(KEY_USER_ID, "1");
             putUserIntoRedis(user);
         } catch (RuntimeException e) {
             Map<String, String> map = new HashMap<>(2);

@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -7,13 +7,9 @@ import com.example.demo.entity.PubProject;
 import com.example.demo.service.IMonthlyReportSingleProjectService;
 import com.example.demo.service.IPubProjectService;
 import com.example.demo.untils.ExcelUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,28 +22,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * ExportController
+ * ExportTest
  *
  * @author ZhangJP
- * @date 2021/3/29
+ * @date 2021/5/21
  */
-@RestController
-@Api(tags = "导入导出模块")
+@SpringBootTest
 @Slf4j
-public class ExportController {
-
-    private final IPubProjectService service;
-    private final IMonthlyReportSingleProjectService monthlyReportSingleProjectService;
+public class ExportTest {
 
     @Autowired
-    public ExportController(IPubProjectService service, IMonthlyReportSingleProjectService monthlyReportSingleProjectService) {
-        this.service = service;
-        this.monthlyReportSingleProjectService = monthlyReportSingleProjectService;
-    }
+    IPubProjectService service;
+    @Autowired
+    IMonthlyReportSingleProjectService monthlyReportSingleProjectService;
 
-
-    @ApiOperation(value = "姓名、年级导出测试")
-    @GetMapping("excelExport")
     public void excelExport(HttpServletResponse response) {
         String[] excelHeader = {"姓名", "年纪"};
 
@@ -67,8 +55,6 @@ public class ExportController {
         ExcelUtils.exportExcel(response, excelHeader, excelHeaderKey, list, "统计表格", "用户数据");
     }
 
-    @ApiOperation(value = "导入", notes = "出版便捷录入测试")
-    @PostMapping("import")
     public void excelImport(MultipartFile file, HttpServletResponse response) throws IOException {
         String[] excelHeader = {"系统编号", "部门编号", "部门", "项目组编号", "项目组", "大项", "名称", "年份", "月份", "勘察日期", "专业", "设计费", "设计人员", "附件", "备注", "状态", "出版状态", "创建人", "创建时间", "更新时间", "单册编号"};
         String[] excelHeaderKey = {"id", "dept_id", "dept_name", "sub_dept_id", "sub_dept_name", "parent_project", "name", "year", "month", "survey_date", "major", "design_money",
@@ -110,6 +96,4 @@ public class ExportController {
         service.saveBatch(pubProjects);
 
     }
-
-
 }

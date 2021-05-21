@@ -5,10 +5,8 @@ import com.example.demo.entity.CooperateRatioVO;
 import com.example.demo.entity.SalaryDetail;
 import com.example.demo.entity.SalaryDetailVO;
 import com.example.demo.entity.TreeDepartment;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -20,8 +18,6 @@ import java.util.List;
  * @author zjp
  * @since 2020-09-25
  */
-@Repository
-@Mapper
 public interface SalaryDetailMapper extends BaseMapper<SalaryDetail> {
 
     /**

@@ -1,25 +1,15 @@
 package com.example.demo.entity;
 
 import lombok.Data;
-import org.apache.ibatis.type.Alias;
-
-import java.util.List;
 
 /**
+ * Department
+ *
  * @author ZhangJP
+ * @date 2020/8/5
  */
 @Data
-public class User {
-
-    /**
-     * 钉钉用户id
-     */
-    private String userId;
-
-    /**
-     * 姓名
-     */
-    private String name;
+public class PublishDepartment {
 
     /**
      * 部门id
@@ -42,19 +32,8 @@ public class User {
     private String subDeptName;
 
     /**
-     * 多部门
-     */
-    private List<Department> departments;
-
-    /**
-     * 职位
-     */
-    private String position;
-
-    /**
-     * 是否为领导
+     * 是不是该部门的领导
      */
     private Boolean isLeader;
-
 
 }

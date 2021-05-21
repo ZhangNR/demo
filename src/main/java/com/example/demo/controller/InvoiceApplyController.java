@@ -25,23 +25,19 @@ import java.util.List;
 @Api(tags = "开票申请模块")
 public class InvoiceApplyController {
 
-    private final IInvoiceApplyService service;
-
     @Autowired
-    public InvoiceApplyController(IInvoiceApplyService service) {
-        this.service = service;
-    }
+    IInvoiceApplyService invoiceApplyService;
 
     @ApiOperation(value = "授权用户访问企业的自定义空间")
     @GetMapping("grantCustomSpace")
     public void grantCustomSpace(@RequestParam("fileIds") String fileIds, @RequestParam("userId") String userId, @RequestParam("type") String type) {
-        service.grantCustomSpace(fileIds, userId, type);
+        invoiceApplyService.grantCustomSpace(fileIds, userId, type);
     }
 
     @ApiOperation(value = "授权预览审批附件", notes = "每次预览前都需要授权")
     @GetMapping("grantPreview")
     public void grantPreview(@RequestParam("fileId") String fileId, @RequestParam("userId") String userId, @RequestParam("processInstanceId") String processInstanceId) {
-        service.grantPreview(fileId, userId, processInstanceId);
+        invoiceApplyService.grantPreview(fileId, userId, processInstanceId);
     }
 
     @ApiOperation(value = "批量授权预览审批附件", notes = "每次预览前都需要授权")
@@ -53,6 +49,6 @@ public class InvoiceApplyController {
     @ApiOperation(value = "授权下载审批钉盘文件")
     @GetMapping("dentry")
     public void dentry(@RequestParam("fileId") String fileId, @RequestParam("userId") String userId, @RequestParam("spaceId") String spaceId) {
-        service.dentry(fileId, spaceId, userId);
+        invoiceApplyService.dentry(fileId, spaceId, userId);
     }
 }

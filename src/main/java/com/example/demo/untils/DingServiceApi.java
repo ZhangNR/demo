@@ -1,11 +1,13 @@
 package com.example.demo.untils;
 
+import com.alibaba.fastjson.JSON;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.example.demo.config.Constant;
 import com.example.demo.entity.InvoicePaidVO;
+import com.example.demo.entity.PubProjectVO;
 import com.taobao.api.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -233,7 +235,7 @@ public class DingServiceApi {
      * @apiNote 抄送时间，分为（START, FINISH, START_FINISH request.setCcPosition("START_FINISH"); 可填
      * @apiNote {name:"",value:""} request.setFormComponentValues(formComponentValues); 必填
      */
-    public static String processInstance(InvoicePaidVO invoice, String accessToken) {
+    public static String processInvoiceInstance(InvoicePaidVO invoice, String accessToken) {
 
         try {
             DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/create");
@@ -257,6 +259,48 @@ public class DingServiceApi {
             logger.error("发起审批实例: ", e);
         }
         return null;
+    }
+
+    /**
+     * 发起审批实例
+     *
+     * @param project     数据
+     * @param accessToken token
+     * @apiNote 审核人userid列表 request.setApprovers("") 可填
+     * @apiNote 抄送人userid列表 request.setCcList("userid1,userid2"); 可填
+     * @apiNote 抄送时间，分为（START, FINISH, START_FINISH request.setCcPosition("START_FINISH"); 可填
+     * @apiNote {name:"",value:""} request.setFormComponentValues(formComponentValues); 必填
+     */
+    public static boolean processPublishInstance(PubProjectVO project, String accessToken) {
+
+        try {
+            DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/create");
+            OapiProcessinstanceCreateRequest request = new OapiProcessinstanceCreateRequest();
+            request.setAgentId(Long.valueOf(Constant.AGENT_ID));
+            //审批流的唯一码
+            request.setProcessCode(Constant.PROCESS_CODE);
+
+            List<OapiProcessinstanceCreateRequest.FormComponentValueVo> formComponentValues = PublishFormComponent.getFormComponentValues(project);
+            request.setFormComponentValues(formComponentValues);
+
+            //审批实例发起人的userid
+            request.setOriginatorUserId(project.getCreatorId());
+            //发起人所在的部门
+            if (project.getSubDeptId() == 0) {
+                request.setDeptId(project.getDeptId());
+            } else {
+                request.setDeptId(project.getSubDeptId());
+            }
+
+            OapiProcessinstanceCreateResponse response = client.execute(request, accessToken);
+            logger.info("创建审批实例 {}", JSON.toJSONString(response));
+            if (response.getErrcode() == 0L) {
+                return true;
+            }
+        } catch (ApiException e) {
+            logger.error("processPublishInstance: ", e);
+        }
+        return false;
     }
 
     /**
