@@ -36,4 +36,9 @@ public class ViewController {
         return "publishIndex";
     }
 
+    @GetMapping("header")
+    private String header() {
+        return "header";
+    }
+
 }

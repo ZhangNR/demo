@@ -66,4 +66,6 @@ public class EnumTest {
         System.out.println("green equals 1: " + green.equals(1));
         System.out.format("green == Color.BLUE: %b\n", green == EnumMethodDemo.Color.BLUE);
     }
+
+
 }

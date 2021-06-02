@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DemoApplicationTests {
-    @Test
+//    @Test
     public void contextLoads() {
 
         List<String> list = new ArrayList<>();
@@ -43,7 +44,7 @@ public class DemoApplicationTests {
 
     }
 
-    @Test
+//    @Test
     public void contextLoads2() {
         File file = new File("Hello.World.java");
         String fileName = file.getName();
@@ -60,7 +61,7 @@ public class DemoApplicationTests {
 
     }
 
-    @Test
+//    @Test
     public void merTest() {
         //测试使用的数据
         TestBean bean1 = new TestBean();
@@ -95,6 +96,14 @@ public class DemoApplicationTests {
         // 关闭writer，释放内存
         writer.close();
 
+    }
+
+    @Test
+    public void format() {
+        DecimalFormat decimalFormat = new DecimalFormat("###0.00");
+        System.out.println(decimalFormat.format(10.232));
+        System.out.println(decimalFormat.format(100000000));
+        System.out.println(String.valueOf(decimalFormat.format(100000000)));
     }
 
 }

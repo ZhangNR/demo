@@ -1167,9 +1167,6 @@ let vm = new Vue({
           "position": this.user.position
         }
       }).then(res => {
-        console.log(res);
-        console.log(res.data);
-        console.log(res.data.records);
         this.singleProjectTable = [];
         this.singleProjectTable = res.data.records;
         this.searchForm.total = res.data.total;
@@ -1361,6 +1358,13 @@ let vm = new Vue({
     },
     deviationClass() {
       return this.pubForm.deviation > 0.1 ? 'danger' : 'success';
+    },
+    totalDesignMoney() {
+      let totalDesignMoney = this.readTable.reduce((pre, single) => pre + single.designMoney, 0);
+      return Number.parseInt(totalDesignMoney * 100) / 100
+    },
+    difference() {
+      return Math.round((this.pubForm.sumDesignMoney - this.pubForm.publishMoney) * 100) / 100
     }
   },
   watch: {

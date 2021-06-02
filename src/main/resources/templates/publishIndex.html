@@ -41,17 +41,22 @@
 
             <!--<el-aside style="width: 330px; border-right: 2px solid #eee;box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);">-->
             <el-aside width="330px">
-                <ul class="list" style="padding-bottom: 30px;padding-left: 20px">
-                    <div v-if="approvalList.length == 0">
+                <div v-if="approvalList.length == 0">
+                    <ul class="list" style="padding-bottom: 30px;padding-left: 20px">
                         <li class="list-item" @click="tabClick(0)"> 未找到立项项目</li>
-                    </div>
-                    <li v-for="(item,i) in approvalList" :key="i" class="list-item" @click="tabClick(item.id)">{{item.name}}</li>
-                </ul>
-                <div style="text-align: center;position: fixed; bottom: 0; width: 320px;background-color: #FFF;">
-                    <el-pagination background prev-text="上一页" next-text="下一页" :page-size="approval.pageSize" :hide-on-single-page="true"
-                                   :current-page.sync="approval.currentPage" layout="prev, next" :total="approval.total"
-                                   @current-change="approvalCurrentChange"></el-pagination>
+                    </ul>
                 </div>
+                <div v-else>
+                    <ul class="list" style="padding-bottom: 30px;padding-left: 20px">
+                        <li v-for="item in approvalList" :key="item.id" class="list-item" @click="tabClick(item.id)">{{item.name}}</li>
+                    </ul>
+                    <div style="text-align: center;position: fixed; bottom: 0; width: 320px;background-color: #FFF;">
+                        <el-pagination background prev-text="上一页" next-text="下一页" :page-size="approval.pageSize" :hide-on-single-page="true"
+                                       :current-page.sync="approval.currentPage" layout="prev, next" :total="approval.total"
+                                       @current-change="approvalCurrentChange"></el-pagination>
+                    </div>
+                </div>
+
             </el-aside>
             <el-main v-loading="mainLoading" style="padding-top: 0">
                 <el-row :gutter="20">
@@ -94,11 +99,6 @@
                         <el-button type="primary" @click="add" :disabled="addButtonController" size="small"><i class="el-icon-plus"></i>新建单册
                         </el-button>
                         <el-button type="primary" @click="exportPub" size="small"><i class="el-icon-download"></i>单册导出</el-button>
-                        <!--<el-upload ref="upload" class="upload-demo" action="../project/importExcel" :on-success="importExcel"-->
-                        <!--:on-progress="progressing"-->
-                        <!--:show-file-list="false" :data="{userId: user.userId,name: user.name}" size="small">-->
-                        <!--<el-button slot="trigger" size="small" type="primary" icon="el-icon-upload2">数据导入</el-button>-->
-                        <!--</el-upload>-->
                         <el-button type="primary" @click="importModule" size="small"><i class="el-icon-download"></i>导出模板</el-button>
                         <el-upload ref="upload" class="upload-demo" action :before-upload="readExcel"
                                    :show-file-list="false" :data="{userId: user.userId,name: user.name}" size="small">
@@ -225,12 +225,10 @@
         </el-drawer>
 
         <el-drawer title="修改立项" :visible.sync="approvalDrawer" direction="rtl" size="540px">
-            <ul class="list2" style="padding-left: 10px">
-                <div v-for="(item,i) in allApprovalList" :key="i">
-                    <li class="list-item2 active" @click="switchApproval(item)" v-if="item.id == pubForm.projectApprovalId">{{item.name}}</li>
-                    <li class="list-item2" @click="switchApproval(item)" v-else>{{item.name}}</li>
-                </div>
-
+            <ul class="list2" style="padding-left: 20px">
+                <li :class="{'active':item.id == pubForm.projectApprovalId}" v-for="item in allApprovalList"
+                    :key="item.id" @click="switchApproval(item)">{{item.name}}
+                </li>
             </ul>
 
             <div class="el-drawer__footer">
@@ -239,6 +237,11 @@
         </el-drawer>
 
         <el-drawer title="已选择单项清单" :visible.sync="singleDrawerVisible" direction="rtl" size="100%">
+            <div class="tip">
+                <el-tag type="danger" effect="plain">已选择清单数量：{{readTable.length}}</el-tag>
+                <el-tag type="danger" effect="plain">总设计费： {{totalDesignMoney}}</el-tag>
+                <el-backtop target=".el-drawer__body" :visibility-height="20"></el-backtop>
+            </div>
             <el-table :data="readTable" size="small" border>
                 <el-table-column label="项目名称" width="140" prop="parentProject" align="center">
                 </el-table-column>
@@ -367,6 +370,11 @@
                     <el-input v-model="pubForm.publishMoney" placeholder="例: 100.00, 最多保存两位小数" @input="inputChange(pubForm.publishMoney)"
                               clearable :disabled="pubDialogFormDisabled"></el-input>
                 </el-form-item>
+                <el-form-item label="偏差数值" :label-width="formLabelWidth">
+                    <template slot-scope="scope">
+                        <el-tag type="info">{{ difference }}</el-tag>
+                    </template>
+                </el-form-item>
                 <el-form-item label="偏差" :label-width="formLabelWidth">
                     <template slot-scope="scope">
                         <el-tag :type="deviationClass">{{ deviation }}</el-tag>
@@ -403,40 +411,61 @@
                 <el-tag type="danger"><i class="el-icon-error"></i> 表格中出现红色背景，表示当前选中的单项已被其他人引用，请手动取消勾选！</el-tag>
             </div>
             <el-divider content-position="left">查询条件</el-divider>
-            <el-form :model="searchForm" ref="searchForm" :inline="true" label-width='50px' size="small">
-                <el-form-item label="项目名称" label-width='80px'>
-                    <el-input v-model="searchForm.project" placeholder="例: 2020年本地传送网工程" clearable></el-input>
-                </el-form-item>
-                <el-form-item label="单项名称" label-width='80px'>
-                    <el-input v-model="searchForm.name" placeholder="例: 中国移动通信集团*****传输项目" clearable></el-input>
-                </el-form-item>
-                <el-form-item label="专业">
-                    <el-select v-model="searchForm.major" clearable placeholder="请选择">
-                        <el-option v-for="item in majorList" :key="item.id" :label="item.major" :value="item.major">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="创建人" label-width='60px'>
-                    <el-input v-model="searchForm.creatorName" placeholder="例: 张三" clearable></el-input>
-                </el-form-item>
-                <el-form-item label="年">
-                    <el-input v-model="searchForm.year" placeholder="例: 2020" clearable></el-input>
-                </el-form-item>
-                <el-form-item label="月份">
-                    <el-input v-model="searchForm.month" placeholder="例: 7" clearable></el-input>
-                </el-form-item>
-                <el-form-item label="勘查日期范围" label-width='120px'>
+
+            <el-form :model="searchForm" ref="searchForm" label-width='80px' size="small">
+                    <el-col :span="6">
+                        <el-form-item label="项目名称">
+                            <el-input v-model="searchForm.project" placeholder="例: 2020年本地传送网工程" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="单项名称">
+                            <el-input v-model="searchForm.name" placeholder="例: 中国移动通信集团*****传输项目" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="创建人">
+                            <el-input v-model="searchForm.creatorName" placeholder="例: 张三" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="备注">
+                            <el-input v-model="searchForm.note" placeholder="请输入关键字" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="6">
+                        <el-form-item label="年">
+                            <el-input v-model="searchForm.year" placeholder="例: 2020" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="月份">
+                            <el-input v-model="searchForm.month" placeholder="例: 7" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="专业">
+                            <el-select v-model="searchForm.major" clearable placeholder="请选择">
+                                <el-option v-for="item in majorList" :key="item.id" :label="item.major" :value="item.major">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item>
+                            <el-button type="primary" @click="search">查询</el-button>
+                        </el-form-item>
+                    </el-col>
+
+               <!-- <el-form-item label="勘查日期范围" label-width='120px'>
                     <el-date-picker v-model="searchForm.date" type="daterange" align="left" unlink-panels range-separator="至"
                                     start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions"
                                     value-format="yyyy-MM-dd">
                     </el-date-picker>
-                </el-form-item>
-                <el-form-item label="备注">
-                    <el-input v-model="searchForm.note" placeholder="请输入关键字" clearable></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="search">查询</el-button>
-                </el-form-item>
+                </el-form-item>-->
+
+
             </el-form>
             <el-radio-group v-model="queryType" @change="typeChange" size="small">
                 <el-radio-button label="0">所有未出版的单项</el-radio-button>
