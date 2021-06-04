@@ -423,4 +423,26 @@ public class DingServiceApi {
         }
     }
 
+    /**
+     * 下载审批附件
+     *
+     * @param token token
+     */
+    public static String getFileUrl(String processInstanceId, String fileId, String token) {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/file/url/get");
+        OapiProcessinstanceFileUrlGetRequest req = new OapiProcessinstanceFileUrlGetRequest();
+        OapiProcessinstanceFileUrlGetRequest.GrantCspaceRequest request = new OapiProcessinstanceFileUrlGetRequest.GrantCspaceRequest();
+        request.setProcessInstanceId(processInstanceId);
+        request.setFileId(fileId);
+        req.setRequest(request);
+
+        try {
+            OapiProcessinstanceFileUrlGetResponse rsp = client.execute(req, token);
+            return rsp.getBody();
+        } catch (ApiException e) {
+            logger.error("下载审批附件 ", e);
+        }
+        return "";
+    }
+
 }

@@ -1,15 +1,15 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.entity.InvoiceApplyParams;
 import com.example.demo.service.IInvoiceApplyService;
 import com.example.demo.untils.DingServiceApi;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -21,7 +21,7 @@ import java.util.List;
  * @since 2020-11-30
  */
 @RestController
-@RequestMapping("//invoice-apply")
+@RequestMapping("/invoiceApply")
 @Api(tags = "开票申请模块")
 public class InvoiceApplyController {
 
@@ -50,5 +50,10 @@ public class InvoiceApplyController {
     @GetMapping("dentry")
     public void dentry(@RequestParam("fileId") String fileId, @RequestParam("userId") String userId, @RequestParam("spaceId") String spaceId) {
         invoiceApplyService.dentry(fileId, spaceId, userId);
+    }
+
+    @PostMapping("exportApply")
+    public void exportApply(HttpServletResponse response, @RequestBody InvoiceApplyParams params) {
+        invoiceApplyService.exportApply(response, params);
     }
 }

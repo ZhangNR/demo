@@ -35,7 +35,7 @@ public class OrderContractProject implements Serializable {
     /**
      * 项目编号
      */
-    @TableField("project_num")
+    @TableField("projectNum")
     private String projectNum;
 
     /**

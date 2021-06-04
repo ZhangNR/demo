@@ -49,4 +49,23 @@
         id, pt_dept_id, pt_dept_name, pt_sub_dept_id, pt_sub_dept_name, state, invoicing_name, apply_type, tax_rate, order_contract_ids, sum_amount_order, sum_amount_apply, collection_project, attachment, note, ratio, customer_id, customer_name, tax_number, bank_name, bank_account, address, phone, invoicing_time, invoicing_amount, tax_amount, reimbursement_data, payment_time, payment_amount, is_all, split_amount, creator_id, creator_name, dept_id, voucher_num, voucher_url, create_time, change_time
     </sql>
 
+
+    <!--<select id="listByParams" resultType="com.example.demo.entity.InvoiceApplyVO">-->
+    <select id="listByParams" resultType="map">
+
+        SELECT
+          o.num,
+          o.name,
+          i.*,
+          d.order_contract_project_id,
+          d.apply_amount,
+          p.project_num,
+          p.sum_project_money
+        FROM invoice_apply i
+        INNER JOIN order_contract o ON o.id = i.order_contract_id
+        INNER JOIN apply_detail d ON d.invoice_apply_instance_id = i.voucher_num
+        INNER JOIN order_contract_project p ON p.id = d.order_contract_project_id
+        WHERE i.state = '同意'
+    </select>
+
 </mapper>

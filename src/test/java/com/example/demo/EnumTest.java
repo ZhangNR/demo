@@ -3,7 +3,6 @@ package com.example.demo;
 import com.example.demo.entity.EnumMethodDemo;
 import com.example.demo.entity.ErrorCode;
 import com.example.demo.entity.Signal;
-import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.EnumMap;
@@ -20,7 +19,7 @@ import java.util.Map;
 @SpringBootTest
 public class EnumTest {
 
-    @Test
+    //    @Test
     public void enumSetTest() {
         // EnumSet的使用
         System.out.println("EnumSet展示");
@@ -31,7 +30,7 @@ public class EnumTest {
 
     }
 
-    @Test
+    //    @Test
     public void enumMapTest() {
         // EnumMap的使用
         System.out.println("EnumMap展示");
@@ -45,8 +44,8 @@ public class EnumTest {
         }
     }
 
-    @Test
-    void enumMethod() {
+    //    @Test
+    public void enumMethod() {
         System.out.println("=========== Print all Color ===========");
         for (EnumMethodDemo.Color c : EnumMethodDemo.Color.values()) {
             System.out.println(c + " ordinal: " + c.ordinal());
@@ -66,6 +65,5 @@ public class EnumTest {
         System.out.println("green equals 1: " + green.equals(1));
         System.out.format("green == Color.BLUE: %b\n", green == EnumMethodDemo.Color.BLUE);
     }
-
 
 }

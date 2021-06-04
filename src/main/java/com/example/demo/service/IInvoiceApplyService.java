@@ -2,10 +2,13 @@ package com.example.demo.service;
 
 import com.example.demo.entity.InvoiceApply;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.demo.entity.InvoiceApplyParams;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zjp
@@ -39,4 +42,12 @@ public interface IInvoiceApplyService extends IService<InvoiceApply> {
      * @param userId  用户id
      */
     void dentry(String fileId, String spaceId, String userId);
+
+    /**
+     * 导出invoiceApply 申请记录
+     *
+     * @param response 响应
+     * @param params   参数
+     */
+    void exportApply(HttpServletResponse response, InvoiceApplyParams params);
 }
