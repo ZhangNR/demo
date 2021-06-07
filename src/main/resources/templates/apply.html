@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <title>支付申请历史记录</title>
+    <!-- 引入Vue -->
+    <script src="//vuejs.org/js/vue.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
+    <!-- 引入组件库 -->
+    <script src="//unpkg.com/iview/dist/iview.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <i-button @click="show">Click me!</i-button>
+    <i-button @click="recordExport">导出历史记录</i-button>
+    <Modal v-model="visible" title="Welcome">欢迎使用 iView</Modal>
+    <i-table :columns="columns1" :data="data"></i-table>
+</div>
+
+<script>
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        visible: false,
+        columns1: [{
+          title: '系统编号',
+          key: 'id'
+        },
+          {
+            title: '类型',
+            key: 'category'
+          },
+          {
+            title: '申请理由',
+            key: 'applyReason'
+          }
+        ],
+        data: [],
+      }
+    },
+    methods: {
+      show: function () {
+        this.visible = true;
+      },
+      recordExport() {
+        axios.post('../invoiceRecord/exportHistory', {}, {
+          responseType: 'blob',
+          responseEncoding: 'utf8',
+        }).then(response => {
+          const blob = new Blob([response.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'});
+          const aEle = document.createElement('a');
+          const href = window.URL.createObjectURL(blob);       // 创建下载的链接
+          aEle.href = href;
+          aEle.download = "开票记录";  // 下载后文件名
+          document.body.appendChild(aEle);
+          aEle.click();     // 点击下载
+          document.body.removeChild(aEle); // 下载完成移除元素
+          window.URL.revokeObjectURL(href); // 释放掉blob对象
+        }).catch(error => {
+          console.error(error);
+        });
+      }
+    },
+    mounted() {
+      axios.post('../invoiceRecord/getHistory', {
+        pageSize: 10,
+        pageNumber: 1
+      }).then(result => {
+        console.log(result);
+        this.data = result.data.records;
+      }).catch(err => {
+        console.log(result);
+      })
+    }
+  })
+</script>
+</body>
+</html>

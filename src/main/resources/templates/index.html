@@ -13,9 +13,14 @@
 </head>
 <body>
 <div id="app" v-cloak>
-    <el-button type="primary" @click="pub">文件出版</el-button><br>
-    <el-button type="primary" @click="exportInvoice">导出开票记录</el-button><br>
-    <el-button type="primary" @click="header">header</el-button><br>
+    <el-button type="primary" @click="pub">文件出版</el-button>
+    <br>
+    <el-button type="primary" @click="exportInvoice">导出开票记录</el-button>
+    <br>
+    <el-button type="primary" @click="apply">支付申请记录</el-button>
+    <br>
+    <el-button type="primary" @click="header">header</el-button>
+    <br>
     <el-button type="primary" @click="image">图片压缩</el-button>
     <el-select v-model="uploadType" placeholder="请选择上传类型">
         <el-option label="代发" value="代发">
@@ -77,8 +82,11 @@
           console.error(error);
         });
       },
-      header(){
+      header() {
         window.location.href = '../view/header';
+      },
+      apply() {
+        window.location.href = '../view/apply';
       },
       /* 选择文件类型 */
       uploadChange(value) {

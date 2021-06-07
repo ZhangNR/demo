@@ -4,36 +4,44 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.demo.entity.InvoiceRecord">
-        <id column="id" property="id" />
-        <result column="dept_id" property="deptId" />
-        <result column="dept_name" property="deptName" />
-        <result column="sub_dept_id" property="subDeptId" />
-        <result column="sub_dept_name" property="subDeptName" />
-        <result column="cooperative_payment" property="cooperativePayment" />
-        <result column="contract_id" property="contractId" />
-        <result column="amount_paid" property="amountPaid" />
-        <result column="payable_amount" property="payableAmount" />
-        <result column="income_id" property="incomeId" />
-        <result column="income_paid" property="incomePaid" />
-        <result column="income_payable_expenses" property="incomePayableExpenses" />
-        <result column="type" property="type" />
-        <result column="category" property="category" />
-        <result column="sub_category" property="subCategory" />
-        <result column="amount" property="amount" />
-        <result column="state" property="state" />
-        <result column="customer_name" property="customerName" />
-        <result column="bank_account" property="bankAccount" />
-        <result column="bank_name" property="bankName" />
-        <result column="bank_branch_name" property="bankBranchName" />
-        <result column="apply_reason" property="applyReason" />
-        <result column="note" property="note" />
-        <result column="file_value" property="fileValue" />
-        <result column="create_time" property="createTime" />
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="sub_dept_id" property="subDeptId"/>
+        <result column="sub_dept_name" property="subDeptName"/>
+        <result column="cooperative_payment" property="cooperativePayment"/>
+        <result column="contract_id" property="contractId"/>
+        <result column="amount_paid" property="amountPaid"/>
+        <result column="payable_amount" property="payableAmount"/>
+        <result column="income_id" property="incomeId"/>
+        <result column="income_paid" property="incomePaid"/>
+        <result column="income_payable_expenses" property="incomePayableExpenses"/>
+        <result column="type" property="type"/>
+        <result column="category" property="category"/>
+        <result column="sub_category" property="subCategory"/>
+        <result column="amount" property="amount"/>
+        <result column="state" property="state"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="bank_account" property="bankAccount"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_branch_name" property="bankBranchName"/>
+        <result column="apply_reason" property="applyReason"/>
+        <result column="note" property="note"/>
+        <result column="file_value" property="fileValue"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, dept_id, dept_name, sub_dept_id, sub_dept_name, cooperative_payment, contract_id, amount_paid, payable_amount, income_id, income_paid, income_payable_expenses, type, category, sub_category, amount, state, customer_name, bank_account, bank_name, bank_branch_name, apply_reason, note, file_value, create_time
     </sql>
+
+
+    <select id="selectHistoryList" resultType="com.example.demo.entity.InvoiceRecordVO">
+      SELECT o.num,o.name,o.sum_money,c.num AS income_num,c.name AS income_name,c.sum_money AS income_sum_money,r.* FROM invoice_record r
+        LEFT JOIN order_contract o ON o.id = r.contract_id
+        LEFT JOIN order_contract c ON c.id = r.income_id
+      WHERE r.state = '同意'
+    </select>
 
 </mapper>

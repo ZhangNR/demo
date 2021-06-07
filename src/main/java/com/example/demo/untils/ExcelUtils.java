@@ -7,6 +7,7 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,9 +181,13 @@ public class ExcelUtils {
     public static CellStyle headerStyle(Workbook workbook) {
         Font font = workbook.createFont();
         font.setFontName("宋体");
+        font.setBold(true);
         font.setFontHeightInPoints((short) 11);
         CellStyle cellStyle = commonStyle(workbook);
         cellStyle.setFont(font);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        cellStyle.setFillForegroundColor(IndexedColors.TAN.getIndex());
+
         return cellStyle;
     }
 

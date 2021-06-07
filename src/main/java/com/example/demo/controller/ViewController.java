@@ -41,4 +41,9 @@ public class ViewController {
         return "header";
     }
 
+    @GetMapping("apply")
+    private String apply() {
+        return "apply";
+    }
+
 }
