@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.demo.untils.ExcelUtils.excelOutput;
+
 /**
  * <p>
  * 服务实现类
@@ -217,17 +219,7 @@ public class InvoiceApplyServiceImpl extends ServiceImpl<InvoiceApplyMapper, Inv
         }
     }
 
-    private void excelOutput(HttpServletResponse response, SXSSFWorkbook workbook, String title) throws IOException {
-        title = new String(title.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
-        response.reset();
 
-        response.setContentType("application/octet-stream; charset=utf-8");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Content-Disposition", "attachment; filename=" + title);
-
-        workbook.write(response.getOutputStream());
-        response.getOutputStream().close();
-    }
 
 
 }

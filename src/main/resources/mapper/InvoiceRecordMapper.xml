@@ -44,4 +44,11 @@
       WHERE r.state = '同意'
     </select>
 
+    <select id="listByParams" resultType="map">
+      SELECT o.num,o.name,o.sum_money,c.num AS income_num,c.name AS income_name,c.sum_money AS income_sum_money,r.* FROM invoice_record r
+        LEFT JOIN order_contract o ON o.id = r.contract_id
+        LEFT JOIN order_contract c ON c.id = r.income_id
+      WHERE r.state = '同意'
+    </select>
+
 </mapper>

@@ -29,5 +29,10 @@ public interface InvoiceRecordMapper extends BaseMapper<InvoiceRecord> {
      */
     Page<InvoiceRecordVO> selectHistoryList(Page<InvoiceRecordVO> page, @PathParam("params") InvoiceRecordParams params);
 
+    /**
+     * 查询支付申请历史记录
+     * @param params /
+     * @return list
+     */
     List<Map<String, Object>> listByParams(InvoiceRecordParams params);
 }

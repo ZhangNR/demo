@@ -7,7 +7,6 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,6 +172,18 @@ public class ExcelUtils {
                 break;
         }
         return "";
+    }
+
+    public static void excelOutput(HttpServletResponse response, SXSSFWorkbook workbook, String title) throws IOException {
+        title = new String(title.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+        response.reset();
+
+        response.setContentType("application/octet-stream; charset=utf-8");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Content-Disposition", "attachment; filename=" + title);
+
+        workbook.write(response.getOutputStream());
+        response.getOutputStream().close();
     }
 
     /**

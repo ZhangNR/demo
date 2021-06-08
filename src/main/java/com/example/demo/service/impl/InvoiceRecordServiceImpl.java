@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.demo.untils.ExcelUtils.excelOutput;
+
 /**
  * <p>
  * 服务实现类
@@ -68,19 +70,17 @@ public class InvoiceRecordServiceImpl extends ServiceImpl<InvoiceRecordMapper, I
     public void exportHistory(HttpServletResponse response, InvoiceRecordParams params) {
 
         String[] excelHeader = {
-                "系统编号", "归属部门", "归属项目组", "开票名称", "申请类型", "税率",
-                "订单合同ID", "合同编号", "合同名称", "合同总金额", "申请总金额", "是否简易项目", "备注",
-                "公司名称", "税号", "开户行", "银行账号", "地址", "电话",
-                "开票时间", "发票编号", "累计到款金额", "全部到款", "创建人", "创建时间",
-                "项目ID", "项目编号", "项目总金额", "本次申请金额"
+                "系统编号", "部门", "项目组", "发起人ID",
+                "市场部门合作支付", "合作合同ID", "合同编号", "合同名称", "合同总金额", "已支付金额", "可付金额", "收入合同ID", "合同编号", "合同名称", "合同总金额", "到款金额", "应付合作费用",
+                "支付方式", "支付类型", "支付类别", "申请支付金额",
+                "银行账户名", "银行账户", "开户银行", "开户支行", "申请理由", "备注", "创建时间"
         };
 
         String[] excelHeaderKey = {
-                "id", "pt_dept_name", "pt_sub_dept_name", "invoicing_name", "apply_type", "tax_rate",
-                "order_contract_id", "num", "name", "sum_amount_order", "sum_amount_apply", "collection_project", "note",
-                "customer_name", "tax_number", "bank_name", "bank_account", "address", "phone",
-                "invoicing_time", "invoice_no", "sum_payment_amount", "is_all", "creator_name", "create_time",
-                "order_contract_project_id", "project_num", "sum_project_money", "apply_amount"
+                "id", "dept_name", "sub_dept_name", "user_id",
+                "cooperative_payment", "contract_id", "num", "name", "sum_money", "amount_paid", "payable_amount", "income_id", "income_num", "income_name", "income_sum_money", "income_paid", "income_payable_expenses",
+                "type", "category", "sub_category", "amount",
+                "customer_name", "bank_account", "bank_name", "bank_branch_name", "apply_reason", "note", "create_time"
         };
 
         List<Map<String, Object>> list = mapper.listByParams(params);
@@ -92,16 +92,18 @@ public class InvoiceRecordServiceImpl extends ServiceImpl<InvoiceRecordMapper, I
     }
 
     private void excelNoMerge(HttpServletResponse response, String[] excelHeader, String[] excelHeaderKey, List<Map<String, Object>> list, String title) {
-        List<String> column10Width = Arrays.asList("系统编号", "申请类型", "税率", "订单合同ID", "创建人", "项目ID");
-        List<String> column60Width = Arrays.asList("合同名称", "公司名称");
+        List<String> column10Width = Arrays.asList("系统编号", "市场部门合作支付", "合作合同ID", "收入合同ID", "支付方式", "支付类型", "支付类别");
+        List<String> column60Width = Arrays.asList("申请理由", "合同名称");
+        List<String> column30Width = Arrays.asList("银行账户名", "银行账户", "开户银行", "开户支行");
+
         // 设置cell type 为 number 类型的列名
-        List<String> cellTypeNumber = Arrays.asList("系统编号", "税率", "订单合同ID", "合同总金额", "申请总金额", "发票编号", "累计到款金额", "项目ID", "项目总金额", "本次申请金额");
+        List<String> cellTypeNumber = Arrays.asList("系统编号", "合作合同ID", "合同总金额", "已支付金额", "可付金额", "收入合同ID", "到款金额", "应付合作费用", "申请支付金额");
 
         try (SXSSFWorkbook workbook = new SXSSFWorkbook(list.size() + 1)) {
 
             SXSSFSheet sheet = workbook.createSheet("支付申请记录");
             // excel header
-            customExcelHeader(workbook, sheet, excelHeader, column10Width, column60Width);
+            customExcelHeader(workbook, sheet, excelHeader, column10Width, column30Width, column60Width);
 
             // content style
             CellStyle contentCellStyle = ExcelUtils.contentStyle(workbook);
@@ -121,7 +123,7 @@ public class InvoiceRecordServiceImpl extends ServiceImpl<InvoiceRecordMapper, I
         }
     }
 
-    private void customExcelHeader(SXSSFWorkbook workbook, SXSSFSheet sheet, String[] excelHeader, List<String> column10Width, List<String> column60Width) {
+    private void customExcelHeader(SXSSFWorkbook workbook, SXSSFSheet sheet, String[] excelHeader, List<String> column10Width, List<String> column30Width, List<String> column60Width) {
         // 设置标题
         SXSSFRow row = sheet.createRow(0);
         // 固定表头
@@ -136,6 +138,8 @@ public class InvoiceRecordServiceImpl extends ServiceImpl<InvoiceRecordMapper, I
                 sheet.setColumnWidth(i, 10 * 256);
             } else if (column60Width.contains(excelHeader[i])) {
                 sheet.setColumnWidth(i, 60 * 256);
+            } else if (column30Width.contains(excelHeader[i])) {
+                sheet.setColumnWidth(i, 30 * 256);
             } else {
                 sheet.setColumnWidth(i, 20 * 256);
             }
@@ -157,8 +161,6 @@ public class InvoiceRecordServiceImpl extends ServiceImpl<InvoiceRecordMapper, I
             } else {
                 if (cellTypeNumber.contains(excelHeader[j])) {
                     cell.setCellValue(Double.valueOf(String.valueOf(map.get(excelHeaderKey[j]))));
-                } else if ("全部到款".equals(excelHeader[j])) {
-                    cell.setCellValue("true".equals(String.valueOf(map.get(excelHeaderKey[j]))) ? "是" : "否");
                 } else {
                     cell.setCellValue(String.valueOf(map.get(excelHeaderKey[j])));
                 }
@@ -167,15 +169,4 @@ public class InvoiceRecordServiceImpl extends ServiceImpl<InvoiceRecordMapper, I
         }
     }
 
-    private void excelOutput(HttpServletResponse response, SXSSFWorkbook workbook, String title) throws IOException {
-        title = new String(title.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
-        response.reset();
-
-        response.setContentType("application/octet-stream; charset=utf-8");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Content-Disposition", "attachment; filename=" + title);
-
-        workbook.write(response.getOutputStream());
-        response.getOutputStream().close();
-    }
 }
