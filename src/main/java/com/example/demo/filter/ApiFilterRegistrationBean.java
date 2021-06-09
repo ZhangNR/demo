@@ -17,7 +17,7 @@ import java.util.Collections;
  * @date 2021/5/20
  */
 @Order(20)
-@Component
+//@Component
 @Slf4j
 public class ApiFilterRegistrationBean extends FilterRegistrationBean<Filter> {
     @PostConstruct

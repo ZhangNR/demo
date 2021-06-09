@@ -4,16 +4,58 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.demo.entity.PaymentDetail">
-        <id column="id" property="id" />
-        <result column="invoice_apply_instance_id" property="invoiceApplyInstanceId" />
-        <result column="payment_time" property="paymentTime" />
-        <result column="payment_amount" property="paymentAmount" />
-        <result column="create_time" property="createTime" />
+        <id column="id" property="id"/>
+        <result column="invoice_apply_id" property="invoiceApplyId"/>
+        <result column="payment_time" property="paymentTime"/>
+        <result column="payment_amount" property="paymentAmount"/>
+        <result column="note" property="note"/>
+        <result column="state" property="state"/>
+        <result column="own_amount" property="ownAmount"/>
+        <result column="external_amount" property="externalAmount"/>
+        <result column="annex" property="annex"/>
+        <result column="split_note" property="splitNote"/>
+        <result column="voucher_num" property="voucherNum"/>
+        <result column="voucher_url" property="voucherUrl"/>
+        <result column="create_time" property="createTime"/>
+        <result column="change_time" property="changeTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, invoice_apply_instance_id, payment_time, payment_amount, create_time
+        id, invoice_apply_id, payment_time, payment_amount, note, state, own_amount, external_amount, annex, split_note, voucher_num, voucher_url, create_time, change_time
     </sql>
 
+
+    <select id="listByParams" resultType="map">
+        SELECT
+            p.id,
+            i.pt_dept_name,
+            i.pt_sub_dept_name,
+            i.invoicing_name,
+            i.tax_rate,
+            i.order_contract_id,
+            o.num,
+            o.name,
+            o.sum_money,
+            i.sum_amount_apply,
+            i.invoicing_time,
+            i.invoice_no,
+            i.sum_payment_amount,
+            i.is_all,
+            i.create_time AS invoice_create_time,
+            p.payment_time,
+            p.payment_amount,
+            p.note,
+            p.own_amount,
+            p.external_amount,
+            p.split_note,
+            p.annex,
+            p.create_time
+        FROM
+            payment_detail p
+            INNER JOIN invoice_apply i ON p.invoice_apply_id = i.id
+            INNER JOIN order_contract o ON i.order_contract_id = o.id
+        WHERE
+            p.state = '同意'
+    </select>
 </mapper>

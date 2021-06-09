@@ -26,8 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/invoiceRecord")
 public class InvoiceRecordController {
 
+    private final IInvoiceRecordService service;
+
     @Autowired
-    private IInvoiceRecordService service;
+    public InvoiceRecordController(IInvoiceRecordService service) {
+        this.service = service;
+    }
 
     @PostMapping("getHistory")
     public PageInfo<InvoiceRecordVO> getHistory(@RequestBody InvoiceRecordParams params) {

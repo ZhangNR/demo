@@ -9,31 +9,50 @@
         [v-cloak] {
             display: none !important;
         }
+
+        #app {
+            padding: 20px;
+        }
+
     </style>
 </head>
 <body>
 <div id="app" v-cloak>
-    <el-button type="primary" @click="pub">文件出版</el-button>
-    <br>
-    <el-button type="primary" @click="exportInvoice">导出开票记录</el-button>
-    <br>
-    <el-button type="primary" @click="apply">支付申请记录</el-button>
-    <br>
-    <el-button type="primary" @click="header">header</el-button>
-    <br>
-    <el-button type="primary" @click="image">图片压缩</el-button>
-    <el-select v-model="uploadType" placeholder="请选择上传类型">
-        <el-option label="代发" value="代发">
-        </el-option>
-    </el-select>
-    <el-upload class="upload-demo" ref="upload" multiple action="" :file-list="formFileList"
-               :http-request="postUploadFileData"
-               :on-change="fileChange" :before-remove="beforeRemove" :on-remove="handleRemove"
-               :on-success="uploadSuccess" :on-error="uploadError"
-               :before-upload="beforeUpload" accept=".xls,.xlsx,.xlm,.xlsm,.pdf" :auto-upload="false">
-        <el-button slot="trigger" type="primary">选取文件</el-button>
-        <el-button style="margin-left: 20px;" type="success" @click="submitUpload">上传到服务器</el-button>
-    </el-upload>
+
+    <el-tabs v-model="activeName">
+        <el-tab-pane label="导出功能" name="first">
+            <el-row>
+                <el-button type="primary" @click="pub">文件出版</el-button>
+                <el-button type="primary" @click="apply">支付申请记录</el-button>
+                <el-button type="primary" @click="exportInvoice">导出开票记录</el-button>
+                <el-button type="primary" @click="payment">到款拆分导出</el-button>
+            </el-row>
+
+        </el-tab-pane>
+        <el-tab-pane label="上传测试" name="second">
+            <el-row style="margin-bottom: 20px">
+                <el-button type="primary" @click="image">图片压缩</el-button>
+                <el-select v-model="uploadType" placeholder="请选择上传类型">
+                    <el-option label="代发" value="代发">
+                    </el-option>
+                </el-select>
+            </el-row>
+            <el-row>
+                <el-upload class="upload-demo" ref="upload" multiple action="" :file-list="formFileList"
+                           :http-request="postUploadFileData"
+                           :on-change="fileChange" :before-remove="beforeRemove" :on-remove="handleRemove"
+                           :on-success="uploadSuccess" :on-error="uploadError"
+                           :before-upload="beforeUpload" accept=".xls,.xlsx,.xlm,.xlsm,.pdf" :auto-upload="false">
+                    <el-button slot="trigger" type="primary">选取文件</el-button>
+                    <el-button style="margin-left: 20px;" type="success" @click="submitUpload">上传到服务器</el-button>
+                </el-upload>
+            </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="others" name="third">
+            <el-button type="primary" @click="header">header</el-button>
+        </el-tab-pane>
+    </el-tabs>
+
 </div>
 
 </body>
@@ -48,6 +67,7 @@
     data() {
       return {
         codeList: [],
+        activeName: 'first',
         /* 上传表格数据 */
         uploadData: [], //上传类型
         uploadType: '', //默认选中
@@ -64,29 +84,31 @@
       pub() {
         window.location.href = '../view/publish';
       },
-      exportInvoice() {
-        axios.post('../invoiceApply/exportApply', {}, {
-          responseType: 'blob',
-          responseEncoding: 'utf8',
-        }).then(response => {
-          const blob = new Blob([response.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'});
-          const aEle = document.createElement('a');
-          const href = window.URL.createObjectURL(blob);       // 创建下载的链接
-          aEle.href = href;
-          aEle.download = "开票记录";  // 下载后文件名
-          document.body.appendChild(aEle);
-          aEle.click();     // 点击下载
-          document.body.removeChild(aEle); // 下载完成移除元素
-          window.URL.revokeObjectURL(href); // 释放掉blob对象
-        }).catch(error => {
-          console.error(error);
-        });
-      },
       header() {
         window.location.href = '../view/header';
       },
       apply() {
         window.location.href = '../view/apply';
+      },
+      exportInvoice() {
+        axios.post('../invoiceApply/exportApply', {}, {
+          responseType: 'blob',
+          responseEncoding: 'utf8',
+        }).then(response => {
+          download(response.data, "开票记录");
+        }).catch(error => {
+          console.error(error);
+        });
+      },
+      payment() {
+        axios.post('../payment/export', {}, {
+          responseType: 'blob',
+          responseEncoding: 'utf8',
+        }).then(response => {
+          download(response.data, "到款拆分");
+        }).catch(error => {
+          console.error(error);
+        });
       },
       /* 选择文件类型 */
       uploadChange(value) {
@@ -111,9 +133,8 @@
           return false;
         }
         // 验证文件类型
-        var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase();
-        const extension = testmsg === 'xlsx' || testmsg === 'xls' || testmsg === 'xlm' || testmsg === 'xlsm' || testmsg === 'pdf';
-        if (!extension) {
+        let fileType = file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase();
+        if (!(fileType === 'xlsx' || fileType === 'xls' || fileType === 'xlm' || fileType === 'xlsm' || fileType === 'pdf')) {
           this.$message.warning('上传文件只能是Excel和PDF格式!');
           return false;
         }
@@ -122,21 +143,21 @@
       postUploadFileData2(param) {
         let code;
         let errorMsg;
-        let formData = new FormData();
+        const formData = new FormData();
 
         this.$confirm('是否上传文件?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let WebData = {
+          const WebData = {
             uploadType: '代发',
             year: 2020,
             month: 11,
             authCode: []
           };
           console.log(this.formFileList);
-          let promise = [];
+          const promise = [];
           this.formFileList.forEach((param, index) => {
             formData.append('files', param.raw);
 
@@ -203,14 +224,14 @@
         });
       },
       postUploadFileData(param) {
-        let formData = new FormData();
+        const formData = new FormData();
 
         this.$confirm('是否上传文件?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let WebData = {
+          const WebData = {
             uploadType: '代发',
             year: 2020,
             month: 11,
@@ -286,5 +307,21 @@
       // });
     }
   })
+
+  function download(data, fileName) {
+    const blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'});
+    const aEle = document.createElement('a');
+    // 创建下载的链接
+    const href = window.URL.createObjectURL(blob);
+    aEle.href = href;
+    // 下载后文件名
+    aEle.download = fileName;
+    document.body.appendChild(aEle);
+    aEle.click();
+    // 下载完成移除元素
+    document.body.removeChild(aEle);
+    // 释放掉blob对象
+    window.URL.revokeObjectURL(href);
+  }
 </script>
 </html>

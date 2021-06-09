@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.demo.untils.ExcelUtils.addCellContent;
+import static com.example.demo.untils.ExcelUtils.addExcelHeader;
 import static com.example.demo.untils.ExcelUtils.excelOutput;
 
 /**
@@ -41,8 +43,12 @@ import static com.example.demo.untils.ExcelUtils.excelOutput;
 @Slf4j
 public class InvoiceRecordServiceImpl extends ServiceImpl<InvoiceRecordMapper, InvoiceRecord> implements IInvoiceRecordService {
 
+    private final InvoiceRecordMapper mapper;
+
     @Autowired
-    private InvoiceRecordMapper mapper;
+    public InvoiceRecordServiceImpl(InvoiceRecordMapper mapper) {
+        this.mapper = mapper;
+    }
 
     /**
      * 获取历史数据
@@ -85,13 +91,11 @@ public class InvoiceRecordServiceImpl extends ServiceImpl<InvoiceRecordMapper, I
 
         List<Map<String, Object>> list = mapper.listByParams(params);
 
-        String title = "支付申请记录" + LocalDate.now() + ".xlsx";
-
-        excelNoMerge(response, excelHeader, excelHeaderKey, list, title);
+        excelNoMerge(response, excelHeader, excelHeaderKey, list);
 
     }
 
-    private void excelNoMerge(HttpServletResponse response, String[] excelHeader, String[] excelHeaderKey, List<Map<String, Object>> list, String title) {
+    private void excelNoMerge(HttpServletResponse response, String[] excelHeader, String[] excelHeaderKey, List<Map<String, Object>> list) {
         List<String> column10Width = Arrays.asList("系统编号", "市场部门合作支付", "合作合同ID", "收入合同ID", "支付方式", "支付类型", "支付类别");
         List<String> column60Width = Arrays.asList("申请理由", "合同名称");
         List<String> column30Width = Arrays.asList("银行账户名", "银行账户", "开户银行", "开户支行");
@@ -101,72 +105,22 @@ public class InvoiceRecordServiceImpl extends ServiceImpl<InvoiceRecordMapper, I
 
         try (SXSSFWorkbook workbook = new SXSSFWorkbook(list.size() + 1)) {
 
-            SXSSFSheet sheet = workbook.createSheet("支付申请记录");
+            SXSSFSheet sheet = workbook.createSheet("支付申请");
             // excel header
-            customExcelHeader(workbook, sheet, excelHeader, column10Width, column30Width, column60Width);
+            addExcelHeader(workbook, sheet, excelHeader, column10Width, column30Width, column60Width);
 
             // content style
             CellStyle contentCellStyle = ExcelUtils.contentStyle(workbook);
 
-            // cell context
-            for (int i = 0; i < list.size(); i++) {
-                Map<String, Object> map = list.get(i);
-                SXSSFRow sheetRow = sheet.createRow(i + 1);
-                sheetRow.setHeight((short) 500);
+            // cell content
+            addCellContent(sheet, list, excelHeader, excelHeaderKey, cellTypeNumber, null, contentCellStyle);
 
-                cellValueSetting(contentCellStyle, sheetRow, map, excelHeader, excelHeaderKey, cellTypeNumber);
-            }
-
-            excelOutput(response, workbook, title);
+            // excel output
+            excelOutput(response, workbook, "支付申请记录" + LocalDate.now() + ".xlsx");
         } catch (IOException e) {
             log.error("ExcelUtils - exportExcel {} [error]: ", LocalDateTime.now(), e);
         }
     }
 
-    private void customExcelHeader(SXSSFWorkbook workbook, SXSSFSheet sheet, String[] excelHeader, List<String> column10Width, List<String> column30Width, List<String> column60Width) {
-        // 设置标题
-        SXSSFRow row = sheet.createRow(0);
-        // 固定表头
-        sheet.createFreezePane(0, 1);
-        // 设置行高
-        row.setHeight((short) 700);
-        // 设置样式
-        CellStyle cellStyle = ExcelUtils.headerStyle(workbook);
-        // 设置列宽
-        for (int i = 0; i < excelHeader.length; i++) {
-            if (column10Width.contains(excelHeader[i])) {
-                sheet.setColumnWidth(i, 10 * 256);
-            } else if (column60Width.contains(excelHeader[i])) {
-                sheet.setColumnWidth(i, 60 * 256);
-            } else if (column30Width.contains(excelHeader[i])) {
-                sheet.setColumnWidth(i, 30 * 256);
-            } else {
-                sheet.setColumnWidth(i, 20 * 256);
-            }
-
-            SXSSFCell cell = row.createCell(i);
-            cell.setCellValue(excelHeader[i]);
-            cell.setCellStyle(cellStyle);
-        }
-    }
-
-    private void cellValueSetting(CellStyle contentCellStyle, SXSSFRow row, Map<String, Object> map, String[] excelHeader, String[] excelHeaderKey, List<String> cellTypeNumber) {
-        for (int j = 0; j < excelHeader.length; j++) {
-
-            SXSSFCell cell = row.createCell(j);
-            cell.setCellStyle(contentCellStyle);
-
-            if (map.get(excelHeaderKey[j]) == null) {
-                cell.setCellValue("");
-            } else {
-                if (cellTypeNumber.contains(excelHeader[j])) {
-                    cell.setCellValue(Double.valueOf(String.valueOf(map.get(excelHeaderKey[j]))));
-                } else {
-                    cell.setCellValue(String.valueOf(map.get(excelHeaderKey[j])));
-                }
-            }
-
-        }
-    }
 
 }

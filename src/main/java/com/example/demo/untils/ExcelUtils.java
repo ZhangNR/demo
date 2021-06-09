@@ -174,6 +174,69 @@ public class ExcelUtils {
         return "";
     }
 
+    public static void addExcelHeader(SXSSFWorkbook workbook, SXSSFSheet sheet, String[] excelHeader, List<String> column10Width, List<String> column30Width, List<String> column60Width) {
+        // 设置标题
+        SXSSFRow row = sheet.createRow(0);
+        // 固定表头
+        sheet.createFreezePane(0, 1);
+        // 设置行高
+        row.setHeight((short) 700);
+        // 设置样式
+        CellStyle cellStyle = headerStyle(workbook);
+        // 设置列宽
+        SXSSFCell cell;
+        for (int i = 0; i < excelHeader.length; i++) {
+
+            if (column60Width != null && column60Width.contains(excelHeader[i])) {
+                sheet.setColumnWidth(i, 60 * 256);
+            } else if (column30Width != null && column30Width.contains(excelHeader[i])) {
+                sheet.setColumnWidth(i, 30 * 256);
+            } else if (column10Width != null && column10Width.contains(excelHeader[i])) {
+                sheet.setColumnWidth(i, 10 * 256);
+            } else {
+                sheet.setColumnWidth(i, 20 * 256);
+            }
+
+            cell = row.createCell(i);
+            cell.setCellValue(excelHeader[i]);
+            cell.setCellStyle(cellStyle);
+        }
+    }
+
+    public static void addCellContent(SXSSFSheet sheet, List<Map<String, Object>> list, String[] excelHeader, String[] excelHeaderKey, List<String> cellTypeNumber, List<String> cellTypeBoolean, CellStyle contentCellStyle) {
+        SXSSFRow sheetRow;
+        for (int i = 0, length = list.size(); i < length; i++) {
+            Map<String, Object> map = list.get(i);
+            sheetRow = sheet.createRow(i + 1);
+            sheetRow.setHeight((short) 500);
+
+            setCellValue(contentCellStyle, sheetRow, map, excelHeader, excelHeaderKey, cellTypeNumber, cellTypeBoolean);
+        }
+    }
+
+    public static void setCellValue(CellStyle contentCellStyle, SXSSFRow row, Map<String, Object> map, String[] excelHeader, String[] excelHeaderKey, List<String> cellTypeNumber, List<String> cellTypeBoolean) {
+        SXSSFCell cell;
+        for (int j = 0, length = excelHeader.length; j < length; j++) {
+
+            cell = row.createCell(j);
+            cell.setCellStyle(contentCellStyle);
+
+            if (map.get(excelHeaderKey[j]) == null || "null".equals(map.get(excelHeaderKey[j]))) {
+                cell.setCellValue("");
+                continue;
+            }
+
+            if (cellTypeNumber != null && cellTypeNumber.contains(excelHeader[j])) {
+                cell.setCellValue(Double.valueOf(String.valueOf(map.get(excelHeaderKey[j]))));
+            } else if (cellTypeBoolean != null && cellTypeBoolean.contains(excelHeader[j])) {
+                // "true".equals(String.valueOf(map.get(excelHeaderKey[j])))
+                cell.setCellValue(Objects.equals(true, map.get(excelHeaderKey[j])) ? "是" : "否");
+            } else {
+                cell.setCellValue(String.valueOf(map.get(excelHeaderKey[j])));
+            }
+        }
+    }
+
     public static void excelOutput(HttpServletResponse response, SXSSFWorkbook workbook, String title) throws IOException {
         title = new String(title.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
         response.reset();

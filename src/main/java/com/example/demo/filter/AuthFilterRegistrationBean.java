@@ -21,7 +21,7 @@ import java.io.IOException;
  * @date 2021/5/20
  */
 @Order(10)
-@Component
+//@Component
 @Slf4j
 public class AuthFilterRegistrationBean extends FilterRegistrationBean<Filter> {
 
